@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RachaConta — Eventos</title>
+<style>
+  :root{
+    --bg:#0a0a0a; --card:#161616; --card2:#202020;
+    --accent:#e10600; --accent2:#ff2b22; --green:#36d399; --red:#ff5c6c;
+    --text:#f3f3f3; --muted:#9a9a9a; --line:#2c2c2c;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:0 0 40px;line-height:1.45;}
+  header{position:sticky;top:0;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.6);background:#0a0a0a;border-bottom:3px solid var(--accent);}
+  header img{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;}
+  #fallback{display:none;background:linear-gradient(135deg,#e10600,#7a0000);padding:22px 18px 18px;}
+  #fallback h1{margin:0;font-size:26px;color:#fff;font-weight:800;letter-spacing:-.5px;}
+  #fallback p{margin:3px 0 0;font-size:13px;color:#ffd5d3;font-weight:600;}
+  .wrap{max-width:560px;margin:0 auto;padding:16px;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px;}
+  h2{font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin:0 0 12px;display:flex;align-items:center;gap:8px;}
+  .ic{vertical-align:middle;border-radius:6px;object-fit:contain;flex:0 0 auto;}
+  .ic.hd{width:26px;height:26px;border-radius:8px;}
+  .wa{background:#25D366;color:#06310f;width:100%;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;}
+  .wa:active{transform:scale(.97);}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px;}
+  input,select{width:100%;padding:13px 14px;font-size:16px;border-radius:11px;border:1px solid var(--line);background:var(--card2);color:var(--text);outline:none;}
+  input:focus,select:focus{border-color:var(--accent);}
+  .row{display:flex;gap:9px;}
+  .row > *{flex:1;}
+  button{border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;padding:13px 16px;color:#fff;background:var(--accent);transition:transform .05s;}
+  button:active{transform:scale(.97);}
+  button.full{width:100%;margin-top:12px;}
+  button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:600;}
+  button:disabled{opacity:.5;cursor:not-allowed;}
+  .step{display:flex;align-items:center;gap:7px;margin-top:7px;}
+  .step .lbl{font-size:13px;color:var(--muted);width:78px;}
+  .sbtn{width:34px;height:34px;border-radius:8px;background:var(--card2);border:1px solid var(--line);color:var(--text);font-size:18px;font-weight:700;padding:0;display:flex;align-items:center;justify-content:center;}
+  .scount{min-width:22px;text-align:center;font-weight:700;font-size:15px;}
+  .childpct{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:10px 12px;margin-bottom:10px;}
+  .childpct label{margin:0;flex:1;color:var(--text);font-size:14px;}
+  .childpct input{width:78px;text-align:center;padding:9px;}
+  .x{width:26px;height:26px;border-radius:50%;background:#3a2020;color:#ff8a8a;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;border:none;padding:0;flex:0 0 auto;margin-left:auto;}
+  .pp{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);}
+  .pp:last-child{border-bottom:none;}
+  .pp .pname{font-weight:700;font-size:15px;}
+  .pp .psub{font-size:12px;color:var(--muted);margin-top:2px;}
+  .pp .badge{font-size:10px;font-weight:800;color:#ffd5d3;background:#7a0000;border:1px solid var(--accent);border-radius:20px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
+  .resumo-part{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:14px;margin-bottom:12px;line-height:1.55;}
+  .resumo-part b{color:var(--text);}
+  .resumo-part .pc{color:var(--accent2);}
+  .kids{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+  .kid{font-size:12px;background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:6px 11px;cursor:pointer;color:var(--text);user-select:none;}
+  .kid.ov{background:#11301e;border-color:#1f5b3a;color:#7ef0b0;font-weight:700;}
+  .exp{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+  .exp:last-child{border-bottom:none;}
+  .exp .who{font-size:13px;color:var(--muted);}
+  .exp .val{font-weight:700;color:var(--accent2);white-space:nowrap;margin-left:10px;}
+  .exp .thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--line);margin-top:6px;cursor:pointer;}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:14px 0;}
+  .total{display:flex;justify-content:space-between;font-size:17px;font-weight:800;margin:4px 0 2px;align-items:center;}
+  .who-owes{margin-top:10px;}
+  .who-owes .li{display:flex;justify-content:space-between;font-size:14px;color:var(--text);padding:5px 0;}
+  .settle{background:var(--card2);border-radius:12px;padding:13px 14px;margin-top:9px;display:flex;align-items:center;gap:11px;font-size:15px;border:1px solid var(--line);}
+  .settle .from{color:var(--red);font-weight:700;}
+  .settle .to{color:var(--green);font-weight:700;}
+  .settle .amt{margin-left:auto;font-weight:800;white-space:nowrap;}
+  .arrow{color:var(--muted);}
+  .ok{text-align:center;color:var(--green);font-weight:700;padding:10px 0;}
+  .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:20px;}
+  .pill{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:20px;}
+  .pill.aberto{background:#11301e;color:#7ef0b0;border:1px solid #1f5b3a;}
+  .pill.fechado{background:#2a1414;color:#ff9a9a;border:1px solid #5b1f1f;}
+  .dot{width:13px;height:13px;border-radius:50%;flex:0 0 auto;margin-right:4px;}
+  .dot.aberto{background:var(--green);box-shadow:0 0 8px rgba(54,211,153,.75);}
+  .dot.fechado{background:var(--red);}
+  .trash{width:36px;height:36px;border-radius:9px;background:#2a1414;border:1px solid #5b1f1f;color:#ff8a8a;font-size:16px;padding:0;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .evhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:4px;}
+  .evhead .evname{font-size:20px;font-weight:800;}
+  .hint{font-size:12px;color:var(--muted);margin-top:6px;}
+  .loading{text-align:center;color:var(--muted);padding:40px 0;}
+  .filebtn{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:11px;padding:12px 14px;font-size:14px;font-weight:600;width:100%;justify-content:center;}
+  .filebtn.has{border-color:var(--green);color:var(--green);}
+  .mini{font-size:13px;padding:9px 12px;}
+</style>
+</head>
+<body>
+<header>
+  <img src="banner.png" alt="RachaConta" onerror="document.getElementById('fallback').style.display='block';this.style.display='none';">
+  <div id="fallback"><h1>RachaConta</h1><p>Divida o rolê sem dor de cabeça</p></div>
+</header>
+<div class="wrap">
+
+  <!-- carregando -->
+  <div id="tela-load" class="loading" style="display:none;">Carregando…</div>
+
+  <!-- CRIAR EVENTO -->
+  <div id="tela-criar" style="display:none;">
+    <div class="card">
+      <h2><img src="icon-familia.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('🎉'))"> Criar um evento</h2>
+      <label>Nome do evento</label>
+      <input id="ev-nome-in" placeholder="Ex: FDS na Praia" autocomplete="off">
+      <div class="childpct" style="margin-top:12px;">
+        <label>Cada criança paga</label>
+        <input id="ev-pct" type="number" inputmode="numeric" min="0" max="100" value="50">
+        <span style="color:var(--muted);font-size:14px;">% do adulto</span>
+      </div>
+      <button class="full" id="btn-criar" onclick="criarEvento()">Criar evento e gerar link</button>
+      <p class="hint">Você vira o organizador. Depois é só compartilhar o link com a galera.</p>
+    </div>
+    <div id="meus-eventos"></div>
+  </div>
+
+  <!-- ENTRAR NO EVENTO -->
+  <div id="tela-entrar" style="display:none;">
+    <div class="card">
+      <h2><img src="icon-adulto.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('👋'))"> <span id="entrar-titulo">Entrar no evento</span></h2>
+      <label>Seu nome</label>
+      <input id="en-nome" placeholder="Ex: Fulano de Tal" autocomplete="off">
+      <label>Seu WhatsApp — com DDD</label>
+      <input id="en-wpp" type="tel" inputmode="numeric" placeholder="Ex: DDD+Número 41123456789" autocomplete="off">
+      <div class="row" style="margin-top:6px;">
+        <div>
+          <label>Adultos (com você)</label>
+          <div class="step" style="margin-top:0;">
+            <button class="sbtn" onclick="stepEn('ad',-1)">−</button>
+            <span class="scount" id="en-ad">1</span>
+            <button class="sbtn" onclick="stepEn('ad',1)">+</button>
+          </div>
+        </div>
+        <div>
+          <label>Crianças</label>
+          <div class="step" style="margin-top:0;">
+            <button class="sbtn" onclick="stepEn('cr',-1)">−</button>
+            <span class="scount" id="en-cr">0</span>
+            <button class="sbtn" onclick="stepEn('cr',1)">+</button>
+          </div>
+        </div>
+      </div>
+      <button class="full" id="btn-entrar" onclick="entrar()">Entrar</button>
+    </div>
+  </div>
+
+  <!-- TELA DO EVENTO -->
+  <div id="tela-evento" style="display:none;">
+    <div class="card">
+      <div class="evhead">
+        <span class="evname" id="ev-nome"></span>
+        <span class="pill" id="ev-status"></span>
+      </div>
+      <p class="hint" id="ev-hint"></p>
+      <button class="wa" onclick="compartilhar()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#06310f"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+        Compartilhar link do evento
+      </button>
+    </div>
+
+    <div class="card">
+      <h2><img src="icon-familia.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('👥'))"> Quem tá no rolê</h2>
+      <div id="lista-participantes"></div>
+    </div>
+
+    <div class="card" id="card-lancar">
+      <h2><img src="icon-despesas.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('🧾'))"> Lançar um gasto</h2>
+      <label>O que foi comprado</label>
+      <input id="ds-desc" placeholder="Ex: Carne, Cerveja, Carvão..." autocomplete="off">
+      <label>Valor (R$)</label>
+      <input id="ds-valor" type="number" inputmode="decimal" placeholder="0,00">
+      <label>Comprovante (opcional)</label>
+      <label class="filebtn" id="ds-filelbl" for="ds-foto">📷 Tirar foto / anexar</label>
+      <input id="ds-foto" type="file" accept="image/*" style="display:none;" onchange="fotoEscolhida()">
+      <button class="full" id="btn-lancar" onclick="lancarDespesa()">+ Lançar no meu nome</button>
+    </div>
+
+    <div class="card">
+      <h2><img src="icon-despesas.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('📋'))"> Gastos do evento</h2>
+      <div id="lista-despesas"></div>
+    </div>
+
+    <div class="card">
+      <h2><img src="icon-acerto.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('💸'))"> Acerto de contas</h2>
+      <div id="resultado"></div>
+    </div>
+
+    <div class="card" id="admin-card" style="display:none;">
+      <h2>🛠️ Você é o organizador</h2>
+      <button class="full" id="btn-fechar" onclick="toggleFechar()">Fechar evento</button>
+      <p class="hint" style="margin-top:8px;">Pra ajustar o % de uma criança (ex: bebê 0%), toque nela na lista "Quem tá no rolê".</p>
+    </div>
+
+    <button class="ghost full mini" onclick="carregar(true)">🔄 Atualizar</button>
+    <button class="ghost full mini" onclick="sair()" style="margin-top:8px;">Sair / trocar de evento</button>
+  </div>
+
+  <p class="foot">RachaConta v2 — eventos colaborativos. Feito com ❤️ pelo Vida.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ====== CONFIG SUPABASE ======
+const SUPABASE_URL = 'https://tbxjyzuhxmctihonhgqy.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_BSVNdeDZUuUrJZsI34Mn1g_RKEoHr78';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ====== ESTADO ======
+const $ = id => document.getElementById(id);
+let eventId = null;
+let ev = null;            // registro do evento
+let participants = [];
+let expenses = [];
+let myId = null;          // id do meu participante neste evento
+let isAdmin = false;
+let enAd = 1, enCr = 0;   // contadores da tela "entrar"
+let pollTimer = null;
+
+const brl = v => (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+function fmtDataHora(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  if(isNaN(d)) return '';
+  return d.toLocaleString('pt-BR',{ day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }).replace(',', ' ·');
+}
+const esc = s => String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+
+// guarda no celular quem eu sou neste evento
+function memKey(id){ return 'rc2:'+id; }
+function getMem(id){ try{ return JSON.parse(localStorage.getItem(memKey(id)))||{}; }catch(e){ return {}; } }
+function setMem(id, obj){ localStorage.setItem(memKey(id), JSON.stringify({...getMem(id),...obj})); }
+
+// ====== TELAS ======
+function show(tela){
+  ['tela-load','tela-criar','tela-entrar','tela-evento'].forEach(t=>$(t).style.display = (t===tela?'':'none'));
+}
+
+// ====== INIT ======
+async function init(){
+  const params = new URLSearchParams(location.search);
+  eventId = params.get('e');
+  if(!eventId){ show('tela-criar'); listarMeusEventos(); return; }
+
+  show('tela-load');
+  const ok = await carregar(false);
+  if(!ok){ alert('Evento não encontrado. Vamos criar um novo.'); history.replaceState(null,'',location.pathname); show('tela-criar'); listarMeusEventos(); return; }
+
+  const mem = getMem(eventId);
+  myId = mem.participantId || null;
+  isAdmin = !!mem.admin;
+  // confere se meu participante ainda existe
+  if(myId && !participants.some(p=>p.id===myId)){ myId=null; }
+
+  if(myId){ show('tela-evento'); renderEvento(); startPoll(); }
+  else { $('entrar-titulo').textContent = 'Entrar em "'+ (ev?ev.name:'evento') +'"'; show('tela-entrar'); }
+}
+
+// ====== CARREGAR DADOS ======
+async function carregar(rerender){
+  const { data:evData, error:e1 } = await sb.from('events').select('*').eq('id', eventId).maybeSingle();
+  if(e1 || !evData){ return false; }
+  ev = evData;
+  const { data:ps } = await sb.from('participants').select('*').eq('event_id', eventId).order('created_at');
+  const { data:xs } = await sb.from('expenses').select('*').eq('event_id', eventId).order('created_at');
+  participants = ps || [];
+  expenses = xs || [];
+  if(rerender && $('tela-evento').style.display!=='none') renderEvento();
+  return true;
+}
+
+function startPoll(){ if(pollTimer) clearInterval(pollTimer); pollTimer = setInterval(()=>{ if(document.visibilityState==='visible') carregar(true); }, 6000); }
+
+// ====== CRIAR EVENTO ======
+async function criarEvento(){
+  const nome = $('ev-nome-in').value.trim();
+  const pctRaw = parseInt($('ev-pct').value);
+  const pct = isNaN(pctRaw) ? 50 : Math.max(0, Math.min(100, pctRaw));
+  if(!nome){ alert('Dê um nome ao evento.'); return; }
+  $('btn-criar').disabled = true; $('btn-criar').textContent = 'Criando…';
+  const { data, error } = await sb.from('events').insert({ name:nome, child_pct:pct }).select().single();
+  if(error){ alert('Erro ao criar: '+error.message); $('btn-criar').disabled=false; $('btn-criar').textContent='Criar evento e gerar link'; return; }
+  eventId = data.id; ev = data;
+  setMem(eventId, { admin:true });
+  isAdmin = true;
+  history.replaceState(null,'', location.pathname+'?e='+eventId);
+  participants = []; expenses = [];
+  $('entrar-titulo').textContent = 'Você criou "'+nome+'". Agora se cadastre:';
+  show('tela-entrar');
+}
+
+// ====== ENTRAR ======
+function stepEn(campo, d){
+  if(campo==='ad'){ enAd = Math.max(1, enAd+d); $('en-ad').textContent = enAd; }
+  else { enCr = Math.max(0, enCr+d); $('en-cr').textContent = enCr; }
+}
+async function entrar(){
+  const nome = $('en-nome').value.trim();
+  if(!nome){ alert('Digite seu nome.'); return; }
+  const wpp = $('en-wpp').value.replace(/\D/g,'');
+  if(wpp.length < 10 || wpp.length > 13){ alert('Coloque seu WhatsApp com DDD. Ex: 41123456789'); return; }
+  $('btn-entrar').disabled = true; $('btn-entrar').textContent = 'Entrando…';
+  const { data, error } = await sb.from('participants')
+    .insert({ event_id:eventId, name:nome, whatsapp:wpp, adults:enAd, children:enCr })
+    .select().single();
+  if(error){ alert('Erro ao entrar: '+error.message); $('btn-entrar').disabled=false; $('btn-entrar').textContent='Entrar'; return; }
+  myId = data.id;
+  setMem(eventId, { participantId:myId });
+  await carregar(false);
+  show('tela-evento'); renderEvento(); startPoll();
+}
+
+// ====== FOTO ======
+let fotoFile = null;
+function fotoEscolhida(){
+  fotoFile = $('ds-foto').files[0] || null;
+  const lbl = $('ds-filelbl');
+  if(fotoFile){ lbl.classList.add('has'); lbl.textContent = '✓ '+ (fotoFile.name.length>22?fotoFile.name.slice(0,22)+'…':fotoFile.name); }
+  else { lbl.classList.remove('has'); lbl.textContent = '📷 Tirar foto / anexar'; }
+}
+// comprime a imagem pra não pesar no storage
+function comprimir(file){
+  return new Promise(res=>{
+    const img = new Image(); const url = URL.createObjectURL(file);
+    img.onload = ()=>{
+      const max = 1280; let {width:w, height:h} = img;
+      if(w>max || h>max){ const r = Math.min(max/w, max/h); w=Math.round(w*r); h=Math.round(h*r); }
+      const cv = document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      URL.revokeObjectURL(url);
+      cv.toBlob(b=>res(b||file), 'image/jpeg', 0.7);
+    };
+    img.onerror = ()=>res(file);
+    img.src = url;
+  });
+}
+
+// ====== LANÇAR DESPESA ======
+async function lancarDespesa(){
+  const desc = $('ds-desc').value.trim() || 'Despesa';
+  const valor = parseFloat(($('ds-valor').value||'').replace(',','.'));
+  if(!valor || valor<=0){ alert('Digite um valor válido.'); return; }
+  $('btn-lancar').disabled = true; $('btn-lancar').textContent = 'Lançando…';
+  let receiptUrl = null;
+  try{
+    if(fotoFile){
+      $('btn-lancar').textContent = 'Enviando foto…';
+      const blob = await comprimir(fotoFile);
+      const path = eventId+'/'+(crypto.randomUUID? crypto.randomUUID() : Date.now()+'-'+Math.random().toString(36).slice(2))+'.jpg';
+      const up = await sb.storage.from('receipts').upload(path, blob, { contentType:'image/jpeg' });
+      if(up.error) throw up.error;
+      receiptUrl = sb.storage.from('receipts').getPublicUrl(path).data.publicUrl;
+    }
+    const { error } = await sb.from('expenses').insert({
+      event_id:eventId, participant_id:myId, description:desc, amount:valor, receipt_url:receiptUrl
+    });
+    if(error) throw error;
+    $('ds-desc').value=''; $('ds-valor').value=''; $('ds-foto').value=''; fotoEscolhida();
+    await carregar(false); renderEvento();
+  }catch(err){ alert('Erro ao lançar: '+(err.message||err)); }
+  $('btn-lancar').disabled = false; $('btn-lancar').textContent = '+ Lançar no meu nome';
+}
+
+// ====== FECHAR / REABRIR (admin) ======
+async function fecharEvento(){
+  if(!confirm('Fechar o evento? Ninguém mais poderá lançar gastos (você pode reabrir).')) return;
+  const { error } = await sb.from('events').update({ status:'fechado' }).eq('id', eventId);
+  if(error){ alert('Erro: '+error.message); return; }
+  await carregar(false); renderEvento();
+}
+async function reabrirEvento(){
+  const { error } = await sb.from('events').update({ status:'aberto' }).eq('id', eventId);
+  if(error){ alert('Erro: '+error.message); return; }
+  await carregar(false); renderEvento();
+}
+function toggleFechar(){ (ev && ev.status==='fechado') ? reabrirEvento() : fecharEvento(); }
+// organizador ajusta o % de uma criança específica (vazio = volta pro padrão do evento)
+async function editarPctCrianca(pid, i){
+  const p = participants.find(x=>x.id===pid); if(!p) return;
+  const padrao = (ev && ev.child_pct!=null ? ev.child_pct : 50);
+  const atual = pctCrianca(p, i);
+  const entrada = prompt('% da Criança '+(i+1)+' de '+p.name+' (0 a 100).\nDeixe vazio pra usar o padrão do evento ('+padrao+'%):', atual);
+  if(entrada===null) return;
+  let arr = Array.isArray(p.child_pcts) ? p.child_pcts.slice() : [];
+  while(arr.length < (p.children||0)) arr.push(null);
+  if(entrada.trim()===''){ arr[i] = null; }
+  else {
+    const v = parseInt(entrada);
+    if(isNaN(v)){ alert('Número inválido.'); return; }
+    arr[i] = Math.max(0, Math.min(100, v));
+  }
+  const { error } = await sb.from('participants').update({ child_pcts: arr }).eq('id', pid);
+  if(error){ alert('Erro: '+error.message); return; }
+  await carregar(false); renderEvento();
+}
+
+// ====== COMPARTILHAR ======
+function linkEvento(){ return location.origin + location.pathname + '?e=' + eventId; }
+function compartilhar(){
+  const t = '🔴⚫ *RachaConta*\nVocê foi convidado pro evento *'+ (ev?ev.name:'') +'*!\n\nEntra aqui, coloca seu nome e lança seus gastos:\n'+ linkEvento();
+  window.open('https://wa.me/?text='+encodeURIComponent(t), '_blank');
+}
+
+// ====== ACERTO (divisão ponderada + transferências mínimas) ======
+// % de uma criança específica: ajuste individual, ou o padrão do evento
+function pctCrianca(p, i){
+  const arr = Array.isArray(p.child_pcts) ? p.child_pcts : [];
+  const v = arr[i];
+  return (v==null) ? (ev && ev.child_pct!=null ? ev.child_pct : 50) : v;
+}
+function pesoP(p){
+  let w = Number(p.adults)||0;
+  const n = Number(p.children)||0;
+  for(let i=0;i<n;i++) w += pctCrianca(p,i)/100;
+  return w;
+}
+function acerto(){
+  const peso = p => pesoP(p);
+  const totalPeso = participants.reduce((s,p)=>s+peso(p),0);
+  const total = expenses.reduce((s,e)=>s+Number(e.amount),0);
+  const share={}, adv={};
+  participants.forEach(p=>{ share[p.id]=0; adv[p.id]=0; });
+  if(totalPeso>0){
+    expenses.forEach(e=>{ participants.forEach(p=>{ share[p.id]+=Number(e.amount)*peso(p)/totalPeso; }); });
+  }
+  expenses.forEach(e=>{ if(e.participant_id && adv[e.participant_id]!==undefined) adv[e.participant_id]+=Number(e.amount); });
+  const bal = participants.map(p=>({ id:p.id, nome:p.name, v:Math.round((adv[p.id]-share[p.id])*100)/100 }));
+  const cred = bal.filter(b=>b.v>0.009).sort((a,b)=>b.v-a.v);
+  const dev  = bal.filter(b=>b.v<-0.009).sort((a,b)=>a.v-b.v);
+  const transf=[]; let i=0,j=0;
+  while(i<dev.length && j<cred.length){
+    const valor = Math.min(-dev[i].v, cred[j].v); const v = Math.round(valor*100)/100;
+    if(v>0.009) transf.push({ de:dev[i].nome, para:cred[j].nome, valor:v });
+    dev[i].v+=valor; cred[j].v-=valor;
+    if(Math.abs(dev[i].v)<0.01) i++; if(Math.abs(cred[j].v)<0.01) j++;
+  }
+  return { total, share, adv, transf, peso };
+}
+
+// ====== RENDER ======
+function renderEvento(){
+  const fechado = ev && ev.status==='fechado';
+  $('ev-nome').textContent = ev ? ev.name : '';
+  $('ev-status').textContent = fechado ? 'fechado' : 'aberto';
+  $('ev-status').className = 'pill ' + (fechado?'fechado':'aberto');
+  $('ev-hint').textContent = fechado
+    ? 'Evento fechado. Veja o acerto abaixo.'
+    : 'Cada um lança os próprios gastos. Compartilhe o link com a galera.';
+
+  // participantes — com resumo visível pra todos
+  const totA = participants.reduce((s,p)=>s+(p.adults||0),0);
+  const totC = participants.reduce((s,p)=>s+(p.children||0),0);
+  const pct  = (ev && ev.child_pct!=null ? ev.child_pct : 50);
+  const resumoP = participants.length
+    ? `<div class="resumo-part">👥 <b>${participants.length}</b> ${participants.length===1?'pessoa cadastrada':'cadastros'} · <b>${totA}</b> adulto(s) · <b>${totC}</b> criança(s)<br>🧒 cada criança paga <b class="pc">${pct}%</b> do adulto (padrão)</div>`
+    : '';
+  $('lista-participantes').innerHTML = resumoP + (participants.length
+    ? participants.map(p=>{
+        const mem = (p.id===myId) ? '<span class="badge">você</span>' : '';
+        const sub = p.adults+' adulto(s)'+(p.children?' · '+p.children+' criança(s)':'');
+        let kids = '';
+        if(isAdmin && (p.children||0)>0){
+          let chips = '';
+          for(let i=0;i<p.children;i++){
+            const v = pctCrianca(p,i);
+            const ov = Array.isArray(p.child_pcts) && p.child_pcts[i]!=null;
+            chips += `<span class="kid ${ov?'ov':''}" onclick="editarPctCrianca('${p.id}',${i})">🧒 Criança ${i+1}: ${v}% ✏️</span>`;
+          }
+          kids = `<div class="kids">${chips}</div>`;
+        }
+        return `<div class="pp"><div style="flex:1;"><div class="pname">${esc(p.name)}${mem}</div><div class="psub">${sub}</div>${kids}</div></div>`;
+      }).join('')
+    : '<div class="empty">Ninguém entrou ainda.</div>');
+
+  // formulário de lançar — escondido se fechado
+  $('card-lancar').style.display = fechado ? 'none' : '';
+
+  // despesas
+  const nome = id => { const p=participants.find(x=>x.id===id); return p?p.name:'—'; };
+  $('lista-despesas').innerHTML = expenses.length
+    ? expenses.map(e=>`<div class="exp"><div style="flex:1;">
+        <div>${esc(e.description)}</div>
+        <div class="who">pago por ${esc(nome(e.participant_id))} · ${fmtDataHora(e.created_at)}</div>
+        ${e.receipt_url?`<img class="thumb" src="${esc(e.receipt_url)}" onclick="window.open('${esc(e.receipt_url)}','_blank')" alt="comprovante">`:''}
+      </div><div style="display:flex;align-items:center;">
+        <span class="val">${brl(e.amount)}</span>
+        ${(!fechado)?`<button class="x" style="margin-left:10px;width:22px;height:22px;font-size:14px;" onclick="removerDespesa('${e.id}')">×</button>`:''}
+      </div></div>`).join('')
+    : '<div class="empty">Nenhum gasto lançado ainda.</div>';
+
+  // resultado
+  const r = acerto();
+  let html = `<div class="total"><span>Total gasto</span><span>${brl(r.total)}</span></div>`;
+  if(participants.length){
+    html += '<div class="who-owes">';
+    participants.forEach(p=>{ html += `<div class="li"><span>${esc(p.name)} consumiu</span><span>${brl(r.share[p.id]||0)}</span></div>`; });
+    html += '</div>';
+  }
+  if(r.transf.length){
+    html += '<div style="margin-top:14px;">';
+    r.transf.forEach(t=>{ html += `<div class="settle"><span class="from">${esc(t.de)}</span><span class="arrow">→</span><span class="to">${esc(t.para)}</span><span class="amt">${brl(t.valor)}</span></div>`; });
+    html += '</div>';
+    html += '<button class="wa" onclick="resumoWhatsApp()"><svg width="20" height="20" viewBox="0 0 24 24" fill="#06310f"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>Mandar resumo no WhatsApp</button>';
+  } else if(expenses.length){
+    html += '<div class="ok">✅ Tá tudo certo, ninguém deve nada!</div>';
+  }
+  $('resultado').innerHTML = html;
+
+  // área admin
+  if(isAdmin){
+    $('admin-card').style.display = '';
+    $('btn-fechar').textContent = fechado ? 'Reabrir lançamentos' : 'Fechar evento (travar lançamentos)';
+  } else { $('admin-card').style.display = 'none'; }
+}
+
+async function removerDespesa(id){
+  if(!confirm('Apagar este gasto?')) return;
+  const { error } = await sb.from('expenses').delete().eq('id', id);
+  if(error){ alert('Erro: '+error.message); return; }
+  await carregar(false); renderEvento();
+}
+
+function resumoWhatsApp(){
+  const r = acerto();
+  let t = '🔴⚫ *RachaConta* — '+ (ev?ev.name:'') +'\n\n';
+  t += '💰 Total: '+brl(r.total)+'\n\n';
+  if(r.transf.length){
+    t += '*Quem paga pra quem:*\n';
+    r.transf.forEach(x=>{ t += '• '+x.de+' ➜ '+x.para+': *'+brl(x.valor)+'*\n'; });
+  } else { t += '✅ Tá tudo certo, ninguém deve nada!\n'; }
+  t += '\n*Consumo por pessoa:*\n';
+  participants.forEach(p=>{ t += '• '+p.name+': '+brl(r.share[p.id]||0)+'\n'; });
+  t += '\n_feito no RachaConta_';
+  window.open('https://wa.me/?text='+encodeURIComponent(t), '_blank');
+}
+
+function resetFormCriar(){
+  $('btn-criar').disabled = false; $('btn-criar').textContent = 'Criar evento e gerar link';
+  $('ev-nome-in').value = ''; $('ev-pct').value = '50';
+}
+function resetFormEntrar(){
+  $('btn-entrar').disabled = false; $('btn-entrar').textContent = 'Entrar';
+  $('en-nome').value = ''; $('en-wpp').value = '';
+  enAd = 1; enCr = 0; $('en-ad').textContent = '1'; $('en-cr').textContent = '0';
+}
+function sair(){
+  if(!confirm('Sair deste evento neste aparelho? (o evento continua existindo)')) return;
+  history.replaceState(null,'',location.pathname);
+  if(pollTimer) clearInterval(pollTimer);
+  myId=null; isAdmin=false; eventId=null;
+  resetFormCriar(); resetFormEntrar();
+  show('tela-criar'); listarMeusEventos();
+}
+
+// lista os eventos que este aparelho já participou (pra reentrar)
+async function listarMeusEventos(){
+  const cont = $('meus-eventos'); if(!cont) return;
+  const ids = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k && k.indexOf('rc2:')===0) ids.push(k.slice(4));
+  }
+  if(!ids.length){ cont.innerHTML=''; return; }
+  const { data } = await sb.from('events').select('id,name,status').in('id', ids);
+  if(!data || !data.length){ cont.innerHTML=''; return; }
+  data.sort((a,b)=> (a.status==='fechado') - (b.status==='fechado'));
+  cont.innerHTML = '<div class="card"><h2>↩️ Voltar a um evento</h2>'
+    + data.map(e=>{
+        const mem = getMem(e.id);
+        const tag = mem.admin ? ' <span class="badge">organizador</span>' : '';
+        const fechado = e.status==='fechado';
+        const dot = `<span class="dot ${fechado?'fechado':'aberto'}"></span>`;
+        const st = fechado ? 'Fechado' : 'Aberto · toque pra lançar';
+        const lixo = fechado ? `<button class="trash" title="Apagar evento" onclick="event.stopPropagation(); apagarEvento('${e.id}')">🗑️</button>` : '';
+        return `<div class="pp" style="cursor:pointer;align-items:center;" onclick="reentrar('${e.id}')">${dot}<div style="flex:1;"><div class="pname">${esc(e.name)}${tag}</div><div class="psub">${st}</div></div>${lixo}<span style="color:var(--accent2);font-size:22px;font-weight:800;margin-left:8px;">›</span></div>`;
+      }).join('')
+    + '<p class="hint" style="padding:0 2px;">🟢 aberto · 🔴 fechado. Só dá pra apagar eventos fechados.</p></div>';
+}
+function reentrar(id){ location.href = location.pathname + '?e=' + id; }
+
+// apaga um evento fechado: se você é o organizador, some pra todos; senão, sai só da sua lista
+async function apagarEvento(id){
+  const mem = getMem(id);
+  if(mem.admin){
+    if(!confirm('Apagar este evento DE VEZ? Remove todos os gastos e participantes, para todo mundo. Não dá pra desfazer.')) return;
+    const { error } = await sb.from('events').delete().eq('id', id);
+    if(error){ alert('Erro ao apagar: '+error.message); return; }
+  } else {
+    if(!confirm('Tirar este evento da sua lista? (ele continua existindo para os outros)')) return;
+  }
+  localStorage.removeItem('rc2:'+id);
+  listarMeusEventos();
+}
+
+// enter pra agilizar
+$('ev-nome-in').addEventListener('keydown',e=>{ if(e.key==='Enter') criarEvento(); });
+$('en-nome').addEventListener('keydown',e=>{ if(e.key==='Enter') entrar(); });
+
+init();
+</script>
+</body>
+</html>

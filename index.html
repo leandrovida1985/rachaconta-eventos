@@ -69,6 +69,10 @@
   .arrow{color:var(--muted);}
   .ok{text-align:center;color:var(--green);font-weight:700;padding:10px 0;}
   .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:20px;}
+  #foto-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:16px;}
+  #foto-overlay.on{display:flex;}
+  #foto-grande{max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;}
+  .foto-voltar{position:fixed;top:16px;left:16px;background:var(--accent);color:#fff;border-radius:11px;padding:11px 18px;font-weight:700;font-size:15px;border:none;z-index:101;}
   .pill{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:20px;}
   .pill.aberto{background:#11301e;color:#7ef0b0;border:1px solid #1f5b3a;}
   .pill.fechado{background:#2a1414;color:#ff9a9a;border:1px solid #5b1f1f;}
@@ -194,6 +198,11 @@
   </div>
 
   <p class="foot">RachaConta v2 — eventos colaborativos. Feito com ❤️ pelo Vida.</p>
+</div>
+
+<div id="foto-overlay" onclick="fecharFoto()">
+  <button class="foto-voltar" onclick="fecharFoto()">‹ Voltar</button>
+  <img id="foto-grande" src="" alt="Comprovante" onclick="event.stopPropagation()">
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -363,7 +372,8 @@ async function fecharEvento(){
   if(!confirm('Fechar o evento? Ninguém mais poderá lançar gastos (você pode reabrir).')) return;
   const { error } = await sb.from('events').update({ status:'fechado' }).eq('id', eventId);
   if(error){ alert('Erro: '+error.message); return; }
-  await carregar(false); renderEvento();
+  alert('Evento fechado! ✅ Ele continua na sua lista — é só tocar nele pra ver o acerto.');
+  irParaInicio();
 }
 async function reabrirEvento(){
   const { error } = await sb.from('events').update({ status:'aberto' }).eq('id', eventId);
@@ -478,7 +488,7 @@ function renderEvento(){
     ? expenses.map(e=>`<div class="exp"><div style="flex:1;">
         <div>${esc(e.description)}</div>
         <div class="who">pago por ${esc(nome(e.participant_id))} · ${fmtDataHora(e.created_at)}</div>
-        ${e.receipt_url?`<img class="thumb" src="${esc(e.receipt_url)}" onclick="window.open('${esc(e.receipt_url)}','_blank')" alt="comprovante">`:''}
+        ${e.receipt_url?`<img class="thumb" src="${esc(e.receipt_url)}" onclick="abrirFoto('${esc(e.receipt_url)}')" alt="comprovante">`:''}
       </div><div style="display:flex;align-items:center;">
         <span class="val">${brl(e.amount)}</span>
         ${(!fechado)?`<button class="x" style="margin-left:10px;width:22px;height:22px;font-size:14px;" onclick="removerDespesa('${e.id}')">×</button>`:''}
@@ -540,13 +550,16 @@ function resetFormEntrar(){
   $('en-nome').value = ''; $('en-wpp').value = '';
   enAd = 1; enCr = 0; $('en-ad').textContent = '1'; $('en-cr').textContent = '0';
 }
-function sair(){
-  if(!confirm('Sair deste evento neste aparelho? (o evento continua existindo)')) return;
+function irParaInicio(){
   history.replaceState(null,'',location.pathname);
   if(pollTimer) clearInterval(pollTimer);
   myId=null; isAdmin=false; eventId=null;
   resetFormCriar(); resetFormEntrar();
   show('tela-criar'); listarMeusEventos();
+}
+function sair(){
+  if(!confirm('Sair deste evento neste aparelho? (o evento continua existindo)')) return;
+  irParaInicio();
 }
 
 // lista os eventos que este aparelho já participou (pra reentrar)
@@ -588,6 +601,9 @@ async function apagarEvento(id){
   localStorage.removeItem('rc2:'+id);
   listarMeusEventos();
 }
+
+function abrirFoto(url){ $('foto-grande').src = url; $('foto-overlay').classList.add('on'); }
+function fecharFoto(){ $('foto-overlay').classList.remove('on'); $('foto-grande').src = ''; }
 
 // enter pra agilizar
 $('ev-nome-in').addEventListener('keydown',e=>{ if(e.key==='Enter') criarEvento(); });

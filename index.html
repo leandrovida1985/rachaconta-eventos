@@ -195,7 +195,7 @@
       <label>O que foi comprado</label>
       <input id="ds-desc" placeholder="Ex: Carne, Cerveja, Carvão..." autocomplete="off">
       <label>Valor (R$)</label>
-      <input id="ds-valor" type="number" inputmode="decimal" placeholder="0,00">
+      <input id="ds-valor" type="text" inputmode="numeric" placeholder="0,00" oninput="fmtValorInput(this)" autocomplete="off">
       <label>Comprovante (opcional)</label>
       <label class="filebtn" id="ds-filelbl" for="ds-foto">📷 Tirar foto / anexar</label>
       <input id="ds-foto" type="file" accept="image/*" style="display:none;" onchange="fotoEscolhida()">
@@ -258,6 +258,17 @@ function fmtDataHora(iso){
   return d.toLocaleString('pt-BR',{ day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }).replace(',', ' ·');
 }
 const esc = s => String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+// máscara de dinheiro: a pessoa digita só números e a vírgula dos centavos entra sozinha
+function fmtValorInput(el){
+  let dig = el.value.replace(/\D/g,'');
+  if(!dig){ el.value=''; return; }
+  dig = String(parseInt(dig.slice(0,11),10));
+  while(dig.length < 3) dig = '0'+dig;
+  const cent = dig.slice(-2);
+  const reais = dig.slice(0,-2).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  el.value = reais + ',' + cent;
+}
+function parseValor(str){ return str ? parseFloat(str.replace(/\./g,'').replace(',','.')) : NaN; }
 
 // guarda no celular quem eu sou neste evento
 function memKey(id){ return 'rc2:'+id; }
@@ -374,7 +385,7 @@ function comprimir(file){
 // ====== LANÇAR DESPESA ======
 async function lancarDespesa(){
   const desc = $('ds-desc').value.trim() || 'Despesa';
-  const valor = parseFloat(($('ds-valor').value||'').replace(',','.'));
+  const valor = parseValor($('ds-valor').value);
   if(!valor || valor<=0){ alert('Digite um valor válido.'); return; }
   $('btn-lancar').disabled = true; $('btn-lancar').textContent = 'Lançando…';
   let receiptUrl = null;

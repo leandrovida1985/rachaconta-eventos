@@ -53,8 +53,19 @@
   .kids{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
   .kid{font-size:12px;background:var(--card2);border:1px solid var(--line);border-radius:20px;padding:6px 11px;cursor:pointer;color:var(--text);user-select:none;}
   .kid.ov{background:#11301e;border-color:#1f5b3a;color:#7ef0b0;font-weight:700;}
-  .exp{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
-  .exp:last-child{border-bottom:none;}
+  .nmrow{display:flex;align-items:center;gap:8px;margin-top:7px;}
+  .nmin{flex:1;padding:9px 11px;font-size:14px;}
+  .exp{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;}
+  .exprow{border-bottom:1px solid var(--line);}
+  .exprow:last-child{border-bottom:none;}
+  .exp .out{font-size:12px;color:#ff8a8a;margin-top:3px;}
+  .adj{margin-top:5px;}
+  .adj a{color:var(--accent2);font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;}
+  .dedit{display:flex;flex-wrap:wrap;gap:6px;padding:2px 0 12px;}
+  .ichip{display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:6px 11px;font-size:13px;cursor:pointer;user-select:none;border:1px solid var(--line);}
+  .ichip.on{background:#11301e;border-color:#1f5b3a;color:#7ef0b0;}
+  .ichip.off{background:#2a1414;border-color:#5b1f1f;color:#ff9a9a;}
+  .ichip.off .tx{text-decoration:line-through;opacity:.85;}
   .exp .who{font-size:13px;color:var(--muted);}
   .exp .val{font-weight:700;color:var(--accent2);white-space:nowrap;margin-left:10px;}
   .exp .thumb{width:40px;height:40px;border-radius:8px;object-fit:cover;border:1px solid var(--line);margin-top:6px;cursor:pointer;}
@@ -62,17 +73,40 @@
   .total{display:flex;justify-content:space-between;font-size:17px;font-weight:800;margin:4px 0 2px;align-items:center;}
   .who-owes{margin-top:10px;}
   .who-owes .li{display:flex;justify-content:space-between;font-size:14px;color:var(--text);padding:5px 0;}
+  .who-owes .ow{cursor:pointer;font-weight:600;align-items:center;}
+  .who-owes .ow .nm{display:flex;align-items:center;gap:7px;}
+  .who-owes .ow .ch{color:var(--accent2);font-size:12px;width:12px;display:inline-block;}
+  .det{padding:0 0 8px 19px;}
+  .det .dl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);padding:2px 0;}
+  .det .dl.tot{color:var(--text);font-weight:700;border-top:1px solid var(--line);margin-top:3px;padding-top:5px;}
+  .det .dl .cada{color:#8a8a8a;}
+  .dtab{display:grid;grid-template-columns:1fr auto auto;gap:3px 14px;font-size:12px;padding:2px 0;}
+  .dtab > div{color:var(--muted);}
+  .dtab .dh{font-weight:700;color:#8a8a8a;border-bottom:1px solid var(--line);padding-bottom:3px;}
+  .dtab .r{text-align:right;}
+  .dtab .dt{font-weight:700;color:var(--text);border-top:1px solid var(--line);padding-top:4px;margin-top:1px;}
   .settle{background:var(--card2);border-radius:12px;padding:13px 14px;margin-top:9px;display:flex;align-items:center;gap:11px;font-size:15px;border:1px solid var(--line);}
   .settle .from{color:var(--red);font-weight:700;}
   .settle .to{color:var(--green);font-weight:700;}
   .settle .amt{margin-left:auto;font-weight:800;white-space:nowrap;}
   .arrow{color:var(--muted);}
   .ok{text-align:center;color:var(--green);font-weight:700;padding:10px 0;}
+  .sbar{display:flex;height:22px;border-radius:6px;overflow:hidden;background:var(--card2);}
+  .sbar > div{height:100%;min-width:2px;}
+  .sleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;}
+  .sleg span{display:inline-flex;align-items:center;gap:5px;color:var(--text);}
+  .sleg i{width:11px;height:11px;border-radius:3px;display:inline-block;flex:0 0 auto;}
+  .sleg b{color:var(--muted);font-weight:600;}
   .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:20px;}
   #foto-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:16px;}
   #foto-overlay.on{display:flex;}
   #foto-grande{max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;}
   .foto-voltar{position:fixed;top:16px;left:16px;background:var(--accent);color:#fff;border-radius:11px;padding:11px 18px;font-weight:700;font-size:15px;border:none;z-index:101;}
+  #part-editor{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.8);overflow-y:auto;padding:24px 14px;}
+  #part-editor.on{display:block;}
+  .pe-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:560px;margin:0 auto;}
+  .pe-card h2{color:var(--accent2);margin-top:0;}
+  .pedit{background:var(--card2);border:1px solid var(--line);color:var(--accent2);width:34px;height:34px;border-radius:9px;font-size:15px;padding:0;flex:0 0 auto;align-self:center;cursor:pointer;}
   .pill{display:inline-block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;padding:3px 10px;border-radius:20px;}
   .pill.aberto{background:#11301e;color:#7ef0b0;border:1px solid #1f5b3a;}
   .pill.fechado{background:#2a1414;color:#ff9a9a;border:1px solid #5b1f1f;}
@@ -129,12 +163,7 @@
       <h2><img src="icon-familia.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('🎉'))"> Criar um evento</h2>
       <label>Nome do evento</label>
       <input id="ev-nome-in" placeholder="Ex: FDS na Praia" autocomplete="off">
-      <div class="childpct" style="margin-top:12px;">
-        <label>Cada criança paga</label>
-        <input id="ev-pct" type="number" inputmode="numeric" min="0" max="100" value="50">
-        <span style="color:var(--muted);font-size:14px;">% do adulto</span>
-      </div>
-      <button class="full" id="btn-criar" onclick="criarEvento()">Criar evento e gerar link</button>
+      <button class="full" id="btn-criar" onclick="criarEvento()" style="margin-top:12px;">Criar evento e gerar link</button>
       <p class="hint">Você vira o organizador. Depois é só compartilhar o link com a galera.</p>
     </div>
     <div id="meus-eventos"></div>
@@ -166,6 +195,7 @@
           </div>
         </div>
       </div>
+      <div id="en-membros"></div>
       <button class="full" id="btn-entrar" onclick="entrar()">Entrar</button>
       <button class="ghost full mini" onclick="irParaInicio()" style="margin-top:8px;">↩️ Início / criar outro evento</button>
     </div>
@@ -208,6 +238,11 @@
     </div>
 
     <div class="card">
+      <h2>📊 Pra onde foi o dinheiro</h2>
+      <div id="resumo-gastos"></div>
+    </div>
+
+    <div class="card">
       <h2><img src="icon-acerto.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('💸'))"> Acerto de contas</h2>
       <div id="resultado"></div>
     </div>
@@ -222,12 +257,30 @@
     <button class="ghost full mini" onclick="sair()" style="margin-top:8px;">Sair / trocar de evento</button>
   </div>
 
-  <p class="foot">RachaConta v2 — eventos colaborativos. Feito com ❤️ pelo Vida.</p>
+  <p class="foot">RachaConta versão 1.0 — eventos colaborativos. Feito com ❤️ pelo Vida.</p>
 </div>
 
 <div id="foto-overlay" onclick="fecharFoto()">
   <button class="foto-voltar" onclick="fecharFoto()">‹ Voltar</button>
   <img id="foto-grande" src="" alt="Comprovante" onclick="event.stopPropagation()">
+</div>
+
+<div id="part-editor">
+  <div class="pe-card">
+    <h2 id="pe-titulo">Editar pessoa</h2>
+    <label>Nome</label>
+    <input id="pe-nome" placeholder="Nome" autocomplete="off">
+    <label>WhatsApp (opcional)</label>
+    <input id="pe-wpp" type="tel" inputmode="numeric" placeholder="Ex: 41123456789" autocomplete="off">
+    <div class="row" style="margin-top:6px;">
+      <div><label>Adultos</label><div class="step" style="margin-top:0;"><button class="sbtn" onclick="stepPe('ad',-1)">−</button><span class="scount" id="pe-ad">1</span><button class="sbtn" onclick="stepPe('ad',1)">+</button></div></div>
+      <div><label>Crianças</label><div class="step" style="margin-top:0;"><button class="sbtn" onclick="stepPe('cr',-1)">−</button><span class="scount" id="pe-cr">0</span><button class="sbtn" onclick="stepPe('cr',1)">+</button></div></div>
+    </div>
+    <div id="pe-membros"></div>
+    <button class="full" id="pe-salvar" onclick="salvarParticipante()">Salvar</button>
+    <button class="ghost full mini" id="pe-remover" onclick="removerParticipante()" style="margin-top:8px;color:#ff8a8a;border-color:#5b1f1f;">🗑️ Remover esta pessoa</button>
+    <button class="ghost full mini" onclick="fecharEditor()" style="margin-top:8px;">Cancelar</button>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -246,6 +299,9 @@ let expenses = [];
 let myId = null;          // id do meu participante neste evento
 let isAdmin = false;
 let enAd = 1, enCr = 0;   // contadores da tela "entrar"
+let expDesp = {};         // quais despesas estão com 'quem dividiu' aberto
+let expPessoa = {};       // quais pessoas estão com o detalhe aberto no acerto
+let peId=null, peAd=1, peCr=0;  // editor de participante (organizador)
 let pollTimer = null;
 let session = null;       // sessão do organizador logado (Supabase Auth)
 let authMode = 'login';   // 'login' ou 'signup'
@@ -258,6 +314,7 @@ function fmtDataHora(iso){
   return d.toLocaleString('pt-BR',{ day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }).replace(',', ' ·');
 }
 const esc = s => String(s==null?'':s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const escA = s => String(s==null?'':s).replace(/"/g,'&quot;');
 // máscara de dinheiro: a pessoa digita só números e a vírgula dos centavos entra sozinha
 function fmtValorInput(el){
   let dig = el.value.replace(/\D/g,'');
@@ -321,8 +378,7 @@ function startPoll(){ if(pollTimer) clearInterval(pollTimer); pollTimer = setInt
 async function criarEvento(){
   if(!session){ alert('Entre na sua conta de organizador primeiro.'); homeRoute(); return; }
   const nome = $('ev-nome-in').value.trim();
-  const pctRaw = parseInt($('ev-pct').value);
-  const pct = isNaN(pctRaw) ? 50 : Math.max(0, Math.min(100, pctRaw));
+  const pct = 50;  // padrão; ajustes finos são feitos por criança depois
   if(!nome){ alert('Dê um nome ao evento.'); return; }
   $('btn-criar').disabled = true; $('btn-criar').textContent = 'Criando…';
   const { data, error } = await sb.from('events').insert({ name:nome, child_pct:pct, owner:session.user.id }).select().single();
@@ -340,6 +396,26 @@ async function criarEvento(){
 function stepEn(campo, d){
   if(campo==='ad'){ enAd = Math.max(1, enAd+d); $('en-ad').textContent = enAd; }
   else { enCr = Math.max(0, enCr+d); $('en-cr').textContent = enCr; }
+  renderMembrosInputs();
+}
+function nomeMembro(p, tipo, i){
+  const mn = p.member_names || {};
+  const arr = tipo==='a' ? (mn.a||[]) : (mn.c||[]);
+  const v = arr[i];
+  if(v && String(v).trim()) return String(v).trim();
+  if(tipo==='a' && i===0) return (p.name && p.name.trim()) ? p.name.trim() : 'Adulto 1'; // 1º adulto cai pro nome do cadastro se não nomeado
+  return (tipo==='a'?'Adulto ':'Criança ')+(i+1);
+}
+function renderMembrosInputs(){
+  const cont = $('en-membros'); if(!cont) return;
+  if(enAd < 2 && enCr < 1){ cont.innerHTML=''; return; }
+  const valsA=[], valsC=[];
+  cont.querySelectorAll('[data-a]').forEach(inp=>valsA[+inp.dataset.a]=inp.value);
+  cont.querySelectorAll('[data-c]').forEach(inp=>valsC[+inp.dataset.c]=inp.value);
+  let h = '<label style="margin-top:10px;">Nome das outras pessoas (opcional) — o 1º adulto é o seu nome acima</label>';
+  for(let i=1;i<enAd;i++) h += `<div class="nmrow">👤 <input class="nmin" data-a="${i}" value="${escA(valsA[i]||'')}" placeholder="Adulto ${i+1}"></div>`;
+  for(let i=0;i<enCr;i++) h += `<div class="nmrow">🧒 <input class="nmin" data-c="${i}" value="${escA(valsC[i]||'')}" placeholder="Criança ${i+1}"></div>`;
+  cont.innerHTML = h;
 }
 async function entrar(){
   const nome = $('en-nome').value.trim();
@@ -347,7 +423,27 @@ async function entrar(){
   const wpp = $('en-wpp').value.replace(/\D/g,'');
   if(wpp.length < 10 || wpp.length > 13){ alert('Coloque seu WhatsApp com DDD. Ex: 41123456789'); return; }
   $('btn-entrar').disabled = true; $('btn-entrar').textContent = 'Entrando…';
-  const ins = { event_id:eventId, name:nome, whatsapp:wpp, adults:enAd, children:enCr };
+
+  // evita duplicar: se já existe alguém com esse WhatsApp no evento, reconhece a pessoa
+  const { data: existentes } = await sb.from('participants').select('*').eq('event_id', eventId).eq('whatsapp', wpp);
+  const existente = existentes && existentes[0];
+  if(existente){
+    if(confirm('Já existe "'+existente.name+'" com esse WhatsApp neste evento. É você? Toque OK pra entrar como essa pessoa.')){
+      myId = existente.id;
+      setMem(eventId, { participantId:myId });
+      await carregar(false);
+      show('tela-evento'); renderEvento(); startPoll();
+      return;
+    }
+    alert('Esse WhatsApp já está sendo usado neste evento. Use outro número ou fale com o organizador.');
+    $('btn-entrar').disabled=false; $('btn-entrar').textContent='Entrar';
+    return;
+  }
+
+  const mn = { a:[], c:[] };
+  document.querySelectorAll('#en-membros [data-a]').forEach(inp=>{ mn.a[+inp.dataset.a] = inp.value.trim(); });
+  document.querySelectorAll('#en-membros [data-c]').forEach(inp=>{ mn.c[+inp.dataset.c] = inp.value.trim(); });
+  const ins = { event_id:eventId, name:nome, whatsapp:wpp, adults:enAd, children:enCr, member_names:mn };
   if(session) ins.user_id = session.user.id;
   const { data, error } = await sb.from('participants').insert(ins).select().single();
   if(error){ alert('Erro ao entrar: '+error.message); $('btn-entrar').disabled=false; $('btn-entrar').textContent='Entrar'; return; }
@@ -442,6 +538,81 @@ async function editarPctCrianca(pid, i){
   await carregar(false); renderEvento();
 }
 
+// ====== EDITOR DE PARTICIPANTE (organizador adiciona/edita/remove) ======
+function stepPe(campo, d){
+  if(campo==='ad'){ peAd = Math.max(1, peAd+d); $('pe-ad').textContent = peAd; }
+  else { peCr = Math.max(0, peCr+d); $('pe-cr').textContent = peCr; }
+  renderPeMembros();
+}
+function renderPeMembros(preset){
+  const cont = $('pe-membros'); if(!cont) return;
+  let vA=[], vC=[];
+  if(preset){ vA = preset.a||[]; vC = preset.c||[]; }
+  else {
+    cont.querySelectorAll('[data-a]').forEach(inp=>vA[+inp.dataset.a]=inp.value);
+    cont.querySelectorAll('[data-c]').forEach(inp=>vC[+inp.dataset.c]=inp.value);
+  }
+  const nomeCad = ($('pe-nome').value||'').trim();
+  let h = '<label style="margin-top:10px;">Nome de quem vai usufruir (opcional — vazio usa o nome do cadastro)</label>';
+  for(let i=0;i<peAd;i++){
+    const ph = (i===0) ? (nomeCad || 'Adulto 1') : ('Adulto '+(i+1));
+    h += `<div class="nmrow">👤 <input class="nmin" data-a="${i}" value="${escA(vA[i]||'')}" placeholder="${escA(ph)}"></div>`;
+  }
+  for(let i=0;i<peCr;i++) h += `<div class="nmrow">🧒 <input class="nmin" data-c="${i}" value="${escA(vC[i]||'')}" placeholder="Criança ${i+1}"></div>`;
+  cont.innerHTML = h;
+}
+function abrirEditorNovo(){
+  peId=null; peAd=1; peCr=0;
+  $('pe-titulo').textContent = 'Adicionar pessoa';
+  $('pe-nome').value=''; $('pe-wpp').value='';
+  $('pe-ad').textContent='1'; $('pe-cr').textContent='0';
+  $('pe-remover').style.display='none';
+  renderPeMembros();
+  $('part-editor').classList.add('on');
+}
+function abrirEditorEditar(pid){
+  const p = participants.find(x=>x.id===pid); if(!p) return;
+  peId=p.id; peAd=p.adults||1; peCr=p.children||0;
+  $('pe-titulo').textContent = 'Editar pessoa';
+  $('pe-nome').value=p.name||''; $('pe-wpp').value=p.whatsapp||'';
+  $('pe-ad').textContent=peAd; $('pe-cr').textContent=peCr;
+  $('pe-remover').style.display='';
+  renderPeMembros(p.member_names||{});
+  $('part-editor').classList.add('on');
+}
+function fecharEditor(){ $('part-editor').classList.remove('on'); peId=null; }
+function coletarPeMembros(){
+  const mn={a:[],c:[]};
+  document.querySelectorAll('#pe-membros [data-a]').forEach(inp=>mn.a[+inp.dataset.a]=inp.value.trim());
+  document.querySelectorAll('#pe-membros [data-c]').forEach(inp=>mn.c[+inp.dataset.c]=inp.value.trim());
+  return mn;
+}
+async function salvarParticipante(){
+  const nome = $('pe-nome').value.trim();
+  if(!nome){ alert('Digite o nome.'); return; }
+  const wpp = $('pe-wpp').value.replace(/\D/g,'');
+  const dados = { name:nome, whatsapp:wpp||null, adults:peAd, children:peCr, member_names:coletarPeMembros() };
+  $('pe-salvar').disabled=true; $('pe-salvar').textContent='Salvando…';
+  let error;
+  if(peId){ ({ error } = await sb.from('participants').update(dados).eq('id', peId)); }
+  else { dados.event_id = eventId; ({ error } = await sb.from('participants').insert(dados)); }
+  $('pe-salvar').disabled=false; $('pe-salvar').textContent='Salvar';
+  if(error){ alert('Erro: '+error.message); return; }
+  fecharEditor(); await carregar(false); renderEvento();
+}
+async function removerParticipante(){
+  if(!peId) return;
+  const gastos = expenses.filter(e=>e.participant_id===peId);
+  const msg = gastos.length
+    ? 'Esta pessoa tem '+gastos.length+' gasto(s) lançado(s). Remover vai APAGAR esses gastos também. Continuar?'
+    : 'Remover esta pessoa do evento?';
+  if(!confirm(msg)) return;
+  if(gastos.length){ await sb.from('expenses').delete().eq('participant_id', peId); }
+  const { error } = await sb.from('participants').delete().eq('id', peId);
+  if(error){ alert('Erro: '+error.message); return; }
+  fecharEditor(); await carregar(false); renderEvento();
+}
+
 // ====== COMPARTILHAR ======
 function linkEvento(){ return location.origin + location.pathname + '?e=' + eventId; }
 function compartilhar(){
@@ -462,16 +633,20 @@ function pesoP(p){
   for(let i=0;i<n;i++) w += pctCrianca(p,i)/100;
   return w;
 }
+function incluidosNa(e){
+  const out = Array.isArray(e.out_ids) ? e.out_ids : [];
+  return participants.filter(p=>!out.includes(p.id));
+}
 function acerto(){
-  const peso = p => pesoP(p);
-  const totalPeso = participants.reduce((s,p)=>s+peso(p),0);
   const total = expenses.reduce((s,e)=>s+Number(e.amount),0);
   const share={}, adv={};
   participants.forEach(p=>{ share[p.id]=0; adv[p.id]=0; });
-  if(totalPeso>0){
-    expenses.forEach(e=>{ participants.forEach(p=>{ share[p.id]+=Number(e.amount)*peso(p)/totalPeso; }); });
-  }
-  expenses.forEach(e=>{ if(e.participant_id && adv[e.participant_id]!==undefined) adv[e.participant_id]+=Number(e.amount); });
+  expenses.forEach(e=>{
+    const incl = incluidosNa(e);
+    const pesoTot = incl.reduce((s,p)=>s+pesoP(p),0);
+    if(pesoTot>0) incl.forEach(p=>{ share[p.id] += Number(e.amount)*pesoP(p)/pesoTot; });
+    if(e.participant_id && adv[e.participant_id]!==undefined) adv[e.participant_id]+=Number(e.amount);
+  });
   const bal = participants.map(p=>({ id:p.id, nome:p.name, v:Math.round((adv[p.id]-share[p.id])*100)/100 }));
   const cred = bal.filter(b=>b.v>0.009).sort((a,b)=>b.v-a.v);
   const dev  = bal.filter(b=>b.v<-0.009).sort((a,b)=>a.v-b.v);
@@ -482,7 +657,17 @@ function acerto(){
     dev[i].v+=valor; cred[j].v-=valor;
     if(Math.abs(dev[i].v)<0.01) i++; if(Math.abs(cred[j].v)<0.01) j++;
   }
-  return { total, share, adv, transf, peso };
+  return { total, share, adv, transf };
+}
+function toggleDesp(id){ expDesp[id] = !expDesp[id]; renderEvento(); }
+function togglePessoa(pid){ expPessoa[pid] = !expPessoa[pid]; renderEvento(); }
+async function toggleOutId(expId, pid){
+  const e = expenses.find(x=>x.id===expId); if(!e) return;
+  let out = Array.isArray(e.out_ids) ? e.out_ids.slice() : [];
+  if(out.includes(pid)) out = out.filter(x=>x!==pid); else out.push(pid);
+  e.out_ids = out; renderEvento();           // atualiza na hora
+  const { error } = await sb.from('expenses').update({ out_ids: out }).eq('id', expId);
+  if(error){ alert('Erro: '+error.message); await carregar(false); renderEvento(); }
 }
 
 // ====== RENDER ======
@@ -506,19 +691,28 @@ function renderEvento(){
     ? participants.map(p=>{
         const mem = (p.id===myId) ? '<span class="badge">você</span>' : '';
         const sub = p.adults+' adulto(s)'+(p.children?' · '+p.children+' criança(s)':'');
+        let nomesStr = '';
+        {
+          const ns=[];
+          for(let i=0;i<p.adults;i++) ns.push(nomeMembro(p,'a',i));
+          for(let i=0;i<(p.children||0);i++) ns.push(nomeMembro(p,'c',i));
+          if(ns.length) nomesStr = `<div class="psub" style="color:#7d7d7d;">${esc(ns.join(', '))}</div>`;
+        }
         let kids = '';
         if(isAdmin && (p.children||0)>0){
           let chips = '';
           for(let i=0;i<p.children;i++){
             const v = pctCrianca(p,i);
             const ov = Array.isArray(p.child_pcts) && p.child_pcts[i]!=null;
-            chips += `<span class="kid ${ov?'ov':''}" onclick="editarPctCrianca('${p.id}',${i})">🧒 Criança ${i+1}: ${v}% ✏️</span>`;
+            chips += `<span class="kid ${ov?'ov':''}" onclick="editarPctCrianca('${p.id}',${i})">🧒 ${esc(nomeMembro(p,'c',i))}: ${v}% ✏️</span>`;
           }
           kids = `<div class="kids">${chips}</div>`;
         }
-        return `<div class="pp"><div style="flex:1;"><div class="pname">${esc(p.name)}${mem}</div><div class="psub">${sub}</div>${kids}</div></div>`;
+        const edBtn = (isAdmin && !fechado) ? `<button class="pedit" onclick="abrirEditorEditar('${p.id}')">✏️</button>` : '';
+        return `<div class="pp"><div style="flex:1;"><div class="pname">${esc(p.name)}${mem}</div><div class="psub">${sub}</div>${nomesStr}${kids}</div>${edBtn}</div>`;
       }).join('')
-    : '<div class="empty">Ninguém entrou ainda.</div>');
+    : '<div class="empty">Ninguém entrou ainda.</div>')
+    + ((isAdmin && !fechado) ? `<button class="ghost full mini" style="margin-top:12px;" onclick="abrirEditorNovo()">+ Adicionar pessoa</button>` : '');
 
   // formulário de lançar — escondido se fechado
   $('card-lancar').style.display = fechado ? 'none' : '';
@@ -526,14 +720,29 @@ function renderEvento(){
   // despesas
   const nome = id => { const p=participants.find(x=>x.id===id); return p?p.name:'—'; };
   $('lista-despesas').innerHTML = expenses.length
-    ? expenses.map(e=>`<div class="exp"><div style="flex:1;">
-        <div>${esc(e.description)}</div>
-        <div class="who">pago por ${esc(nome(e.participant_id))} · ${fmtDataHora(e.created_at)}</div>
-        ${e.receipt_url?`<img class="thumb" src="${esc(e.receipt_url)}" onclick="abrirFoto('${esc(e.receipt_url)}')" alt="comprovante">`:''}
-      </div><div style="display:flex;align-items:center;">
-        <span class="val">${brl(e.amount)}</span>
-        ${(!fechado && (isAdmin || e.participant_id===myId))?`<button class="x" style="margin-left:10px;width:22px;height:22px;font-size:14px;" onclick="removerDespesa('${e.id}')">×</button>`:''}
-      </div></div>`).join('')
+    ? expenses.map(e=>{
+        const out = Array.isArray(e.out_ids) ? e.out_ids : [];
+        const podeEditar = !fechado && (isAdmin || e.participant_id===myId);
+        const foraNomes = out.map(nome).filter(n=>n && n!=='—');
+        const aberto = expDesp[e.id];
+        let h = `<div class="exprow"><div class="exp"><div style="flex:1;">
+          <div>${esc(e.description)}</div>
+          <div class="who">pago por ${esc(nome(e.participant_id))} · ${fmtDataHora(e.created_at)}</div>
+          ${foraNomes.length?`<div class="out">não dividiu: ${esc(foraNomes.join(', '))}</div>`:''}
+          ${e.receipt_url?`<img class="thumb" src="${esc(e.receipt_url)}" onclick="abrirFoto('${esc(e.receipt_url)}')" alt="comprovante">`:''}
+          ${podeEditar?`<div class="adj"><a onclick="toggleDesp('${e.id}')">${aberto?'▾ fechar':'✏️ quem dividiu'}</a></div>`:''}
+        </div><div style="display:flex;align-items:center;">
+          <span class="val">${brl(e.amount)}</span>
+          ${podeEditar?`<button class="x" style="margin-left:10px;width:22px;height:22px;font-size:14px;" onclick="removerDespesa('${e.id}')">×</button>`:''}
+        </div></div>`;
+        if(aberto && podeEditar){
+          h += '<div class="dedit">' + (participants.length ? participants.map(p=>{
+            const on = !out.includes(p.id);
+            return `<span class="ichip ${on?'on':'off'}" onclick="toggleOutId('${e.id}','${p.id}')">${on?'✓':'✕'} <span class="tx">${esc(p.name)}</span></span>`;
+          }).join('') : '<span class="empty" style="padding:0;">Sem participantes.</span>') + '</div>';
+        }
+        return h + '</div>';
+      }).join('')
     : '<div class="empty">Nenhum gasto lançado ainda.</div>';
 
   // resultado
@@ -541,7 +750,33 @@ function renderEvento(){
   let html = `<div class="total"><span>Total gasto</span><span>${brl(r.total)}</span></div>`;
   if(participants.length){
     html += '<div class="who-owes">';
-    participants.forEach(p=>{ html += `<div class="li"><span>${esc(p.name)} consumiu</span><span>${brl(r.share[p.id]||0)}</span></div>`; });
+    participants.forEach(p=>{
+      const ex = expPessoa[p.id];
+      const consumiu = r.share[p.id]||0;
+      const gastou = r.adv[p.id]||0;
+      const sld = Math.round((gastou - consumiu)*100)/100;
+      html += `<div class="li ow" onclick="togglePessoa('${p.id}')">
+        <span class="nm"><span class="ch">${ex?'▾':'▸'}</span>${esc(p.name)}</span>
+        <span style="text-align:right;line-height:1.35;">consumiu <b>${brl(consumiu)}</b><br><span style="font-size:12px;color:var(--muted);font-weight:400;">gastou ${brl(gastou)}</span></span>
+      </div>`;
+      if(ex){
+        html += '<div class="det"><div class="dtab">';
+        html += '<div class="dh">Produto</div><div class="dh r">Gastou</div><div class="dh r">Consumiu</div>';
+        expenses.forEach(e=>{
+          const incl = incluidosNa(e);
+          const dentro = incl.some(x=>x.id===p.id);
+          const pesoTot = incl.reduce((s,x)=>s+pesoP(x),0);
+          const consumiuProd = (dentro && pesoTot>0) ? Number(e.amount)*pesoP(p)/pesoTot : 0;
+          const gastouProd = (e.participant_id===p.id) ? Number(e.amount) : 0;
+          html += `<div>${esc(e.description)}</div><div class="r">${gastouProd>0.0001?brl(gastouProd):'—'}</div><div class="r">${consumiuProd>0.0001?brl(consumiuProd):'—'}</div>`;
+        });
+        html += `<div class="dt">Total</div><div class="dt r">${brl(gastou)}</div><div class="dt r">${brl(consumiu)}</div>`;
+        html += '</div>';
+        const txt = sld>0.009 ? 'Tem a receber' : (sld<-0.009 ? 'Tem a pagar' : 'Está quitado');
+        html += `<div class="dl tot"><span>${txt}</span><span>${sld>0.009||sld<-0.009?brl(Math.abs(sld)):'—'}</span></div>`;
+        html += '</div>';
+      }
+    });
     html += '</div>';
   }
   if(r.transf.length){
@@ -553,6 +788,25 @@ function renderEvento(){
     html += '<div class="ok">✅ Tá tudo certo, ninguém deve nada!</div>';
   }
   $('resultado').innerHTML = html;
+
+  // pra onde foi o dinheiro: produtos agrupados, do maior pro menor
+  if(expenses.length){
+    const grupos = {};
+    expenses.forEach(e=>{
+      const nm = (e.description||'Despesa').trim() || 'Despesa';
+      const k = nm.toLowerCase();
+      if(!grupos[k]) grupos[k] = { nome:nm, total:0, qtd:0 };
+      grupos[k].total += Number(e.amount); grupos[k].qtd++;
+    });
+    const lista = Object.values(grupos).sort((a,b)=>b.total-a.total);
+    const tg = lista.reduce((s,g)=>s+g.total,0) || 1;
+    const cores = ['#e10600','#ff7a00','#ffd400','#36d399','#00b4d8','#7b61ff','#ff5c9e','#16a34a','#f43f5e','#9a9a9a'];
+    const seg = lista.map((g,i)=>`<div style="width:${(g.total/tg*100).toFixed(2)}%;background:${cores[i%cores.length]};" title="${esc(g.nome)}"></div>`).join('');
+    const leg = lista.map((g,i)=>{ const pct=Math.round(g.total/tg*100); const q=g.qtd>1?` (${g.qtd}x)`:''; return `<span><i style="background:${cores[i%cores.length]}"></i>${esc(g.nome)}${q} <b>${brl(g.total)} · ${pct}%</b></span>`; }).join('');
+    $('resumo-gastos').innerHTML = `<div class="sbar">${seg}</div><div class="sleg">${leg}</div>`;
+  } else {
+    $('resumo-gastos').innerHTML = '<div class="empty">Nenhum gasto ainda.</div>';
+  }
 
   // área admin
   if(isAdmin){
@@ -586,12 +840,13 @@ function resumoWhatsApp(){
 
 function resetFormCriar(){
   $('btn-criar').disabled = false; $('btn-criar').textContent = 'Criar evento e gerar link';
-  $('ev-nome-in').value = ''; $('ev-pct').value = '50';
+  $('ev-nome-in').value = '';
 }
 function resetFormEntrar(){
   $('btn-entrar').disabled = false; $('btn-entrar').textContent = 'Entrar';
   $('en-nome').value = ''; $('en-wpp').value = '';
   enAd = 1; enCr = 0; $('en-ad').textContent = '1'; $('en-cr').textContent = '0';
+  if($('en-membros')) $('en-membros').innerHTML = '';
 }
 function irParaInicio(){
   history.replaceState(null,'',location.pathname);

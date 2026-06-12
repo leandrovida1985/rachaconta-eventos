@@ -127,6 +127,19 @@
   .hd-wrap{position:relative;max-width:560px;margin:0 auto;}
   .help-top{position:absolute;right:12px;bottom:18px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:16px;font-weight:700;padding:0;z-index:11;line-height:1;}
   .help-top:active{color:var(--accent2);border-color:var(--accent);}
+  .mural{display:grid;grid-template-columns:1fr 1fr;gap:16px 14px;padding:8px 2px 2px;}
+  .pol{position:relative;filter:drop-shadow(0 7px 12px rgba(0,0,0,.5));cursor:pointer;}
+  .pol:nth-child(4n+1){transform:rotate(-2.4deg);}
+  .pol:nth-child(4n+2){transform:rotate(1.9deg);margin-top:10px;}
+  .pol:nth-child(4n+3){transform:rotate(2.3deg);}
+  .pol:nth-child(4n+4){transform:rotate(-1.7deg);margin-top:10px;}
+  .pol .moldura{display:block;width:100%;position:relative;z-index:2;}
+  .pol .foto{position:absolute;left:15.2%;top:15.8%;width:69.5%;height:62%;object-fit:cover;z-index:1;}
+  .pol .frase{position:absolute;left:14%;top:79%;width:72%;height:11%;display:flex;align-items:center;justify-content:center;text-align:center;font-style:italic;font-size:12px;line-height:1.25;color:#3a362e;overflow:hidden;z-index:3;}
+  .pol .autor{position:absolute;left:14%;top:90.5%;width:72%;text-align:center;font-size:9.5px;color:#9a958c;z-index:3;}
+  .pol .mx{position:absolute;right:10%;top:6%;width:24px;height:24px;border-radius:50%;background:rgba(20,20,20,.75);color:#ff9a9a;border:none;font-size:13px;padding:0;z-index:4;}
+  .mm-row{display:flex;gap:9px;margin-top:10px;}
+  .mm-row .filebtn{margin:0;flex:1;}
   #help-overlay{display:none;position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.85);overflow-y:auto;padding:24px 14px;}
   #help-overlay.on{display:block;}
   .hlp-cap{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin:14px 0 8px;}
@@ -258,6 +271,18 @@
     </div>
 
     <div class="card">
+      <h2>📸 Mural de momentos</h2>
+      <p class="hint" style="margin:0;">Pendure as fotos do rolê — viram a lembrança do evento.</p>
+      <div class="mm-row">
+        <label class="filebtn" id="mm-filelbl" for="mm-foto">📷 Escolher foto</label>
+        <input id="mm-foto" type="file" accept="image/*" style="display:none;" onchange="mmFotoEscolhida()">
+      </div>
+      <input id="mm-frase" placeholder="Escreva uma frase (opcional)" maxlength="80" autocomplete="off" style="margin-top:9px;">
+      <button class="full mini" id="btn-momento" onclick="postarMomento()" style="margin-top:9px;">+ Pendurar no mural</button>
+      <div id="mural-lista" class="mural"></div>
+    </div>
+
+    <div class="card">
       <h2>📊 Pra onde foi o dinheiro</h2>
       <div id="resumo-gastos"></div>
     </div>
@@ -369,6 +394,7 @@ let expDesp = {};         // quais despesas estão com 'quem dividiu' aberto
 let expPessoa = {};       // quais pessoas estão com o detalhe aberto no acerto
 let peId=null, peAd=1, peCr=0;  // editor de participante (organizador)
 let pollTimer = null;
+let moments = [];         // mural de momentos
 let session = null;       // sessão do organizador logado (Supabase Auth)
 let authMode = 'login';   // 'login' ou 'signup'
 
@@ -432,8 +458,10 @@ async function carregar(rerender){
   ev = evData;
   const { data:ps } = await sb.from('participants').select('*').eq('event_id', eventId).order('created_at');
   const { data:xs } = await sb.from('expenses').select('*').eq('event_id', eventId).order('created_at');
+  const { data:ms } = await sb.from('moments').select('*').eq('event_id', eventId).order('created_at');
   participants = ps || [];
   expenses = xs || [];
+  moments = ms || [];
   if(rerender && $('tela-evento').style.display!=='none') renderEvento();
   return true;
 }
@@ -874,6 +902,9 @@ function renderEvento(){
     $('resumo-gastos').innerHTML = '<div class="empty">Nenhum gasto ainda.</div>';
   }
 
+  // mural de momentos
+  renderMural();
+
   // área admin
   if(isAdmin){
     $('admin-card').style.display = '';
@@ -1037,6 +1068,57 @@ async function apagarEvento(id){
 
 function abrirFoto(url){ $('foto-grande').src = url; $('foto-overlay').classList.add('on'); }
 function fecharFoto(){ $('foto-overlay').classList.remove('on'); $('foto-grande').src = ''; }
+
+// ====== MURAL DE MOMENTOS ======
+let mmFile = null;
+function mmFotoEscolhida(){
+  mmFile = $('mm-foto').files[0] || null;
+  const lbl = $('mm-filelbl');
+  if(mmFile){ lbl.classList.add('has'); lbl.textContent = '✓ '+(mmFile.name.length>20?mmFile.name.slice(0,20)+'…':mmFile.name); }
+  else { lbl.classList.remove('has'); lbl.textContent = '📷 Escolher foto'; }
+}
+async function postarMomento(){
+  if(!mmFile){ alert('Escolha uma foto primeiro. 📷'); return; }
+  if(!myId){ alert('Entre no evento primeiro.'); return; }
+  const frase = $('mm-frase').value.trim();
+  $('btn-momento').disabled = true; $('btn-momento').textContent = 'Pendurando…';
+  try{
+    const blob = await comprimir(mmFile);
+    const path = eventId+'/momento-'+(crypto.randomUUID? crypto.randomUUID() : Date.now()+'-'+Math.random().toString(36).slice(2))+'.jpg';
+    const up = await sb.storage.from('receipts').upload(path, blob, { contentType:'image/jpeg' });
+    if(up.error) throw up.error;
+    const url = sb.storage.from('receipts').getPublicUrl(path).data.publicUrl;
+    const { error } = await sb.from('moments').insert({ event_id:eventId, participant_id:myId, photo_url:url, caption:frase||null });
+    if(error) throw error;
+    $('mm-frase').value=''; $('mm-foto').value=''; mmFile=null; mmFotoEscolhida();
+    await carregar(false); renderEvento();
+  }catch(err){ alert('Erro ao postar: '+(err.message||err)); }
+  $('btn-momento').disabled = false; $('btn-momento').textContent = '+ Pendurar no mural';
+}
+async function removerMomento(id){
+  const m = moments.find(x=>x.id===id);
+  if(m && !isAdmin && m.participant_id!==myId){ alert('Você só pode tirar as suas fotos do mural.'); return; }
+  if(!confirm('Tirar esta foto do mural?')) return;
+  const { error } = await sb.from('moments').delete().eq('id', id);
+  if(error){ alert('Erro: '+error.message); return; }
+  await carregar(false); renderEvento();
+}
+function renderMural(){
+  const cont = $('mural-lista'); if(!cont) return;
+  const nomeDe = id => { const p=participants.find(x=>x.id===id); return p?p.name:'alguém'; };
+  cont.innerHTML = moments.length
+    ? moments.map(m=>{
+        const podeTirar = isAdmin || m.participant_id===myId;
+        return `<div class="pol" onclick="abrirFoto('${esc(m.photo_url)}')">
+          ${podeTirar?`<button class="mx" onclick="event.stopPropagation();removerMomento('${m.id}')">×</button>`:''}
+          <img class="moldura" src="polaroide.png" alt="">
+          <img class="foto" src="${esc(m.photo_url)}" alt="momento" loading="lazy">
+          <div class="frase">${esc(m.caption||'')}</div>
+          <div class="autor">${esc(nomeDe(m.participant_id))} · ${fmtDataHora(m.created_at)}</div>
+        </div>`;
+      }).join('')
+    : '<div class="empty" style="grid-column:1/-1;">O mural está vazio — pendure o primeiro momento! 📸</div>';
+}
 
 // ====== CENTRAL DE AJUDA ======
 function abrirAjuda(){ $('help-overlay').classList.add('on'); localStorage.setItem('rc2-help-seen','1'); }

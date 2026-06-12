@@ -237,7 +237,7 @@
   <div id="tela-evento" style="display:none;">
     <div class="card">
       <div class="evhead">
-        <span class="evname" id="ev-nome"></span>
+        <span style="display:flex;align-items:center;gap:8px;min-width:0;"><span class="evname" id="ev-nome"></span><button class="pedit" id="ev-edit" onclick="renomearEvento()" style="display:none;" title="Renomear evento">✏️</button></span>
         <span class="pill" id="ev-status"></span>
       </div>
       <p class="hint" id="ev-hint"></p>
@@ -606,6 +606,15 @@ async function fecharEvento(){
   alert('Evento fechado! ✅ Ele continua na sua lista — é só tocar nele pra ver o acerto.');
   irParaInicio();
 }
+async function renomearEvento(){
+  const novo = prompt('Novo nome do evento:', ev ? ev.name : '');
+  if(novo===null) return;
+  const nome = novo.trim();
+  if(!nome){ alert('O nome não pode ficar vazio.'); return; }
+  const { error } = await sb.from('events').update({ name:nome }).eq('id', eventId);
+  if(error){ alert('Erro: '+error.message); return; }
+  await carregar(false); renderEvento();
+}
 async function reabrirEvento(){
   const { error } = await sb.from('events').update({ status:'aberto' }).eq('id', eventId);
   if(error){ alert('Erro: '+error.message); return; }
@@ -770,6 +779,7 @@ function renderEvento(){
   $('ev-nome').textContent = ev ? ev.name : '';
   $('ev-status').textContent = fechado ? 'fechado' : 'aberto';
   $('ev-status').className = 'pill ' + (fechado?'fechado':'aberto');
+  $('ev-edit').style.display = isAdmin ? '' : 'none';
   $('ev-hint').textContent = fechado
     ? 'Evento fechado. Veja o acerto abaixo.'
     : 'Cada um lança os próprios gastos. Compartilhe o link com a galera.';

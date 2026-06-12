@@ -4,19 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>RachaConta — Eventos</title>
+<link rel="icon" type="image/png" href="icone-app.png">
+<link rel="apple-touch-icon" href="icone-app.png">
+<meta name="theme-color" content="#141414">
 <style>
   :root{
-    --bg:#0a0a0a; --card:#161616; --card2:#202020;
-    --accent:#e10600; --accent2:#ff2b22; --green:#36d399; --red:#ff5c6c;
-    --text:#f3f3f3; --muted:#9a9a9a; --line:#2c2c2c;
+    --bg:#141414; --card:#1e1e1e; --card2:#262626;
+    --accent:#EF9F27; --accent2:#FAC775; --green:#36d399; --red:#ff5c6c;
+    --text:#f3f3f3; --muted:#9a9a9a; --line:#34322c;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);padding:0 0 40px;line-height:1.45;}
-  header{position:sticky;top:0;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.6);background:#0a0a0a;border-bottom:3px solid var(--accent);}
+  header{position:sticky;top:0;z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.6);background:#141414;border-bottom:3px solid var(--accent);}
   header img{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;}
-  #fallback{display:none;background:linear-gradient(135deg,#e10600,#7a0000);padding:22px 18px 18px;}
-  #fallback h1{margin:0;font-size:26px;color:#fff;font-weight:800;letter-spacing:-.5px;}
-  #fallback p{margin:3px 0 0;font-size:13px;color:#ffd5d3;font-weight:600;}
+  #fallback{display:none;background:linear-gradient(135deg,#1d1503,#141414);padding:22px 18px 18px;}
+  #fallback h1{margin:0;font-size:26px;color:#FAC775;font-weight:800;letter-spacing:-.5px;}
+  #fallback p{margin:3px 0 0;font-size:13px;color:#e8d9ae;font-weight:600;}
   .wrap{max-width:560px;margin:0 auto;padding:16px;}
   .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:16px;}
   h2{font-size:15px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin:0 0 12px;display:flex;align-items:center;gap:8px;}
@@ -29,7 +32,7 @@
   input:focus,select:focus{border-color:var(--accent);}
   .row{display:flex;gap:9px;}
   .row > *{flex:1;}
-  button{border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;padding:13px 16px;color:#fff;background:var(--accent);transition:transform .05s;}
+  button{border:none;border-radius:11px;font-size:15px;font-weight:700;cursor:pointer;padding:13px 16px;color:#1d1503;background:var(--accent);transition:transform .05s;}
   button:active{transform:scale(.97);}
   button.full{width:100%;margin-top:12px;}
   button.ghost{background:transparent;color:var(--muted);border:1px solid var(--line);font-weight:600;}
@@ -46,7 +49,7 @@
   .pp:last-child{border-bottom:none;}
   .pp .pname{font-weight:700;font-size:15px;}
   .pp .psub{font-size:12px;color:var(--muted);margin-top:2px;}
-  .pp .badge{font-size:10px;font-weight:800;color:#ffd5d3;background:#7a0000;border:1px solid var(--accent);border-radius:20px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
+  .pp .badge{font-size:10px;font-weight:800;color:#FAC775;background:#2b2410;border:1px solid #8a5f10;border-radius:20px;padding:2px 8px;margin-left:6px;vertical-align:middle;}
   .resumo-part{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:14px;margin-bottom:12px;line-height:1.55;}
   .resumo-part b{color:var(--text);}
   .resumo-part .pc{color:var(--accent2);}
@@ -101,7 +104,7 @@
   #foto-overlay{display:none;position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.93);align-items:center;justify-content:center;padding:16px;}
   #foto-overlay.on{display:flex;}
   #foto-grande{max-width:100%;max-height:80vh;border-radius:12px;object-fit:contain;}
-  .foto-voltar{position:fixed;top:16px;left:16px;background:var(--accent);color:#fff;border-radius:11px;padding:11px 18px;font-weight:700;font-size:15px;border:none;z-index:101;}
+  .foto-voltar{position:fixed;top:16px;left:16px;background:var(--accent);color:#1d1503;border-radius:11px;padding:11px 18px;font-weight:700;font-size:15px;border:none;z-index:101;}
   #part-editor{display:none;position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.8);overflow-y:auto;padding:24px 14px;}
   #part-editor.on{display:block;}
   .pe-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;max-width:560px;margin:0 auto;}
@@ -121,12 +124,28 @@
   .filebtn{display:flex;align-items:center;gap:8px;background:var(--card2);border:1px solid var(--line);color:var(--text);border-radius:11px;padding:12px 14px;font-size:14px;font-weight:600;width:100%;justify-content:center;}
   .filebtn.has{border-color:var(--green);color:var(--green);}
   .mini{font-size:13px;padding:9px 12px;}
+  .hd-wrap{position:relative;max-width:560px;margin:0 auto;}
+  .help-top{position:absolute;right:12px;bottom:18px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);font-size:16px;font-weight:700;padding:0;z-index:11;line-height:1;}
+  .help-top:active{color:var(--accent2);border-color:var(--accent);}
+  #help-overlay{display:none;position:fixed;inset:0;z-index:96;background:rgba(0,0,0,.85);overflow-y:auto;padding:24px 14px;}
+  #help-overlay.on{display:block;}
+  .hlp-cap{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--accent2);margin:14px 0 8px;}
+  details.hlp{background:var(--card2);border:1px solid var(--line);border-radius:11px;margin-bottom:8px;overflow:hidden;}
+  details.hlp summary{padding:12px 14px;font-weight:700;font-size:14px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;}
+  details.hlp summary::-webkit-details-marker{display:none;}
+  details.hlp summary::after{content:'▸';margin-left:auto;color:var(--accent2);}
+  details.hlp[open] summary::after{content:'▾';}
+  details.hlp .bd{padding:0 14px 12px;font-size:13.5px;color:var(--muted);line-height:1.6;}
+  details.hlp .bd b{color:var(--text);}
 </style>
 </head>
 <body>
 <header>
-  <img src="banner.png" alt="RachaConta" onerror="document.getElementById('fallback').style.display='block';this.style.display='none';">
-  <div id="fallback"><h1>RachaConta</h1><p>Divida o rolê sem dor de cabeça</p></div>
+  <div class="hd-wrap">
+    <img src="banner-amarelo.png" alt="RachaConta" onerror="document.getElementById('fallback').style.display='block';this.style.display='none';">
+    <div id="fallback"><h1>RachaConta</h1><p>Divida o rolê sem dor de cabeça</p></div>
+    <button class="help-top" onclick="abrirAjuda()" title="Ajuda" aria-label="Ajuda">?</button>
+  </div>
 </header>
 <div class="wrap">
 
@@ -140,9 +159,9 @@
       <p class="hint" style="margin:0 0 6px;">Só quem organiza precisa de conta. Convidado entra pelo link, sem cadastro.</p>
       <div id="auth-extra" style="display:none;">
         <label>Seu nome (aparece nos eventos)</label>
-        <input id="au-nome" placeholder="Ex: Leandro Vida" autocomplete="name">
+        <input id="au-nome" placeholder="Ex: Fulana de Tal" autocomplete="name">
         <label>Seu WhatsApp — com DDD</label>
-        <input id="au-wpp" type="tel" inputmode="numeric" placeholder="Ex: DDD+Número 41123456789" autocomplete="off">
+        <input id="au-wpp" type="tel" inputmode="numeric" placeholder="Ex: DDD+Número 11987654321" autocomplete="off">
       </div>
       <label>E-mail</label>
       <input id="au-email" type="email" inputmode="email" placeholder="voce@email.com" autocomplete="email">
@@ -176,7 +195,7 @@
       <label>Seu nome</label>
       <input id="en-nome" placeholder="Ex: Fulano de Tal" autocomplete="off">
       <label>Seu WhatsApp — com DDD</label>
-      <input id="en-wpp" type="tel" inputmode="numeric" placeholder="Ex: DDD+Número 41123456789" autocomplete="off">
+      <input id="en-wpp" type="tel" inputmode="numeric" placeholder="Ex: DDD+Número 11987654321" autocomplete="off">
       <div class="row" style="margin-top:6px;">
         <div>
           <label>Adultos (com você)</label>
@@ -226,6 +245,7 @@
       <input id="ds-desc" placeholder="Ex: Carne, Cerveja, Carvão..." autocomplete="off">
       <label>Valor (R$)</label>
       <input id="ds-valor" type="text" inputmode="numeric" placeholder="0,00" oninput="fmtValorInput(this)" autocomplete="off">
+      <div class="adj" style="margin-top:6px;"><a onclick="abrirCalc()">🧮 Somar itens da nota</a></div>
       <label>Comprovante (opcional)</label>
       <label class="filebtn" id="ds-filelbl" for="ds-foto">📷 Tirar foto / anexar</label>
       <input id="ds-foto" type="file" accept="image/*" style="display:none;" onchange="fotoEscolhida()">
@@ -271,7 +291,7 @@
     <label>Nome</label>
     <input id="pe-nome" placeholder="Nome" autocomplete="off">
     <label>WhatsApp (opcional)</label>
-    <input id="pe-wpp" type="tel" inputmode="numeric" placeholder="Ex: 41123456789" autocomplete="off">
+    <input id="pe-wpp" type="tel" inputmode="numeric" placeholder="Ex: 11987654321" autocomplete="off">
     <div class="row" style="margin-top:6px;">
       <div><label>Adultos</label><div class="step" style="margin-top:0;"><button class="sbtn" onclick="stepPe('ad',-1)">−</button><span class="scount" id="pe-ad">1</span><button class="sbtn" onclick="stepPe('ad',1)">+</button></div></div>
       <div><label>Crianças</label><div class="step" style="margin-top:0;"><button class="sbtn" onclick="stepPe('cr',-1)">−</button><span class="scount" id="pe-cr">0</span><button class="sbtn" onclick="stepPe('cr',1)">+</button></div></div>
@@ -280,6 +300,52 @@
     <button class="full" id="pe-salvar" onclick="salvarParticipante()">Salvar</button>
     <button class="ghost full mini" id="pe-remover" onclick="removerParticipante()" style="margin-top:8px;color:#ff8a8a;border-color:#5b1f1f;">🗑️ Remover esta pessoa</button>
     <button class="ghost full mini" onclick="fecharEditor()" style="margin-top:8px;">Cancelar</button>
+  </div>
+</div>
+
+<div id="help-overlay">
+  <div class="pe-card">
+    <h2>💡 Central de ajuda</h2>
+    <p class="hint" style="margin:0;">Toque numa pergunta para ver a resposta.</p>
+
+    <div class="hlp-cap">O básico</div>
+    <details class="hlp"><summary>🚀 O que é o RachaConta?</summary><div class="bd">Um app pra dividir os gastos de um rolê (churrasco, viagem, jantar) <b>sem planilha e sem briga</b>. Cada um lança o que gastou e, no fim, o app calcula quem paga quanto pra quem — com o menor número de transferências possível.</div></details>
+    <details class="hlp"><summary>🔒 Preciso instalar ou criar conta?</summary><div class="bd"><b>Não.</b> Convidado entra pelo link, digita nome e WhatsApp e pronto. Só quem <b>organiza</b> o evento cria uma conta (e-mail e senha), pra poder gerenciar tudo.</div></details>
+
+    <div class="hlp-cap">Para quem foi convidado</div>
+    <details class="hlp"><summary>👋 Entrei pelo link. E agora?</summary><div class="bd">1. Digite seu <b>nome</b> e <b>WhatsApp</b>.<br>2. Diga quantos <b>adultos e crianças</b> vieram com você (você pode nomear cada um).<br>3. Pronto, você está no evento e já pode lançar gastos.</div></details>
+    <details class="hlp"><summary>🧾 Como lanço um gasto?</summary><div class="bd">No card <b>"Lançar um gasto"</b>: escreva o que foi (ex: Carne), o valor, e se quiser anexe a <b>foto do comprovante</b>. Toque em <b>"+ Lançar no meu nome"</b>. Todo mundo vê na hora.</div></details>
+    <details class="hlp"><summary>🧮 A nota tem vários itens. Preciso somar de cabeça?</summary><div class="bd">Não! Toque em <b>"🧮 Somar itens da nota"</b> embaixo do campo de valor. Vá digitando item por item — o app soma e joga o total no lançamento.</div></details>
+    <details class="hlp"><summary>✂️ Comprei algo que nem todos usaram. E aí?</summary><div class="bd">No gasto lançado, toque em <b>"✏️ quem dividiu"</b> e desmarque quem ficou de fora (ex: a cerveja que as crianças não bebem 😄). A conta se ajusta sozinha.</div></details>
+    <details class="hlp"><summary>💸 Como sei quanto devo pagar?</summary><div class="bd">No card <b>"Acerto de contas"</b>: toque no seu nome pra ver o detalhe do que consumiu. As setas embaixo mostram <b>quem paga pra quem</b>. O organizador também manda o resumo no grupo do WhatsApp.</div></details>
+
+    <div class="hlp-cap">Para quem organiza</div>
+    <details class="hlp"><summary>🎉 Como crio um evento?</summary><div class="bd">Entre na sua conta, dê um nome ao evento (ex: FDS na Praia) e toque em <b>"Criar evento e gerar link"</b>. Depois é só tocar em <b>"Compartilhar link do evento"</b> e mandar no grupo.</div></details>
+    <details class="hlp"><summary>👥 Posso adicionar ou editar pessoas?</summary><div class="bd">Pode. Em <b>"Quem tá no rolê"</b>, use <b>"+ Adicionar pessoa"</b> (pra quem não tem celular ali) ou o ✏️ ao lado de cada um pra corrigir nome, adultos e crianças.</div></details>
+    <details class="hlp"><summary>🧒 Como funciona o valor das crianças?</summary><div class="bd">Por padrão, criança paga <b>50% do valor de um adulto</b>. O organizador pode ajustar por criança: toque na etiqueta 🧒 dela na lista (ex: bebê = 0%).</div></details>
+    <details class="hlp"><summary>🔒 O que é "fechar o evento"?</summary><div class="bd">Quando acabar o rolê, feche o evento: <b>trava novos lançamentos</b> e congela o acerto final. Mudou algo? Você pode <b>reabrir</b> quando quiser. Eventos fechados podem ser apagados de vez.</div></details>
+
+    <div class="hlp-cap">Dúvidas gerais</div>
+    <details class="hlp"><summary>📱 Meus dados ficam onde?</summary><div class="bd">Os lançamentos ficam guardados na nuvem, só acessíveis por quem tem o link do evento. Seu aparelho lembra de você em cada evento — se trocar de celular, entre de novo pelo link com o <b>mesmo WhatsApp</b> que o app te reconhece.</div></details>
+    <details class="hlp"><summary>🔄 A tela não atualizou. E agora?</summary><div class="bd">O app se atualiza sozinho a cada poucos segundos. Se precisar, toque em <b>"🔄 Atualizar"</b> no fim da página.</div></details>
+
+    <button class="full" onclick="fecharAjuda()" style="margin-top:14px;">Entendi, voltar pro app</button>
+  </div>
+</div>
+
+<div id="calc-overlay" style="display:none;position:fixed;inset:0;z-index:95;background:rgba(0,0,0,.8);overflow-y:auto;padding:24px 14px;">
+  <div class="pe-card">
+    <h2>🧮 Somar itens da nota</h2>
+    <p class="hint" style="margin:0 0 6px;">Digite o valor de cada item e toque em somar. No fim, o total vai direto pro lançamento.</p>
+    <label>Valor do item (R$)</label>
+    <div class="row">
+      <input id="calc-valor" type="text" inputmode="numeric" placeholder="0,00" oninput="fmtValorInput(this)" autocomplete="off">
+      <button onclick="calcAdd()" style="flex:0 0 auto;">+ Somar</button>
+    </div>
+    <div id="calc-lista" style="margin-top:10px;"></div>
+    <div class="total" style="margin-top:10px;"><span>Total</span><span id="calc-total">R$ 0,00</span></div>
+    <button class="full" onclick="calcUsar()">✓ Usar total no lançamento</button>
+    <button class="ghost full mini" onclick="fecharCalc()" style="margin-top:8px;">Cancelar</button>
   </div>
 </div>
 
@@ -421,7 +487,7 @@ async function entrar(){
   const nome = $('en-nome').value.trim();
   if(!nome){ alert('Digite seu nome.'); return; }
   const wpp = $('en-wpp').value.replace(/\D/g,'');
-  if(wpp.length < 10 || wpp.length > 13){ alert('Coloque seu WhatsApp com DDD. Ex: 41123456789'); return; }
+  if(wpp.length < 10 || wpp.length > 13){ alert('Coloque seu WhatsApp com DDD. Ex: 11987654321'); return; }
   $('btn-entrar').disabled = true; $('btn-entrar').textContent = 'Entrando…';
 
   // evita duplicar: se já existe alguém com esse WhatsApp no evento, reconhece a pessoa
@@ -616,7 +682,7 @@ async function removerParticipante(){
 // ====== COMPARTILHAR ======
 function linkEvento(){ return location.origin + location.pathname + '?e=' + eventId; }
 function compartilhar(){
-  const t = '🔴⚫ *RachaConta*\nVocê foi convidado pro evento *'+ (ev?ev.name:'') +'*!\n\nEntra aqui, coloca seu nome e lança seus gastos:\n'+ linkEvento();
+  const t = '⚫🟡 *RachaConta*\nVocê foi convidado pro evento *'+ (ev?ev.name:'') +'*!\n\nEntra aqui, coloca seu nome e lança seus gastos:\n'+ linkEvento();
   window.open('https://wa.me/?text='+encodeURIComponent(t), '_blank');
 }
 
@@ -800,7 +866,7 @@ function renderEvento(){
     });
     const lista = Object.values(grupos).sort((a,b)=>b.total-a.total);
     const tg = lista.reduce((s,g)=>s+g.total,0) || 1;
-    const cores = ['#e10600','#ff7a00','#ffd400','#36d399','#00b4d8','#7b61ff','#ff5c9e','#16a34a','#f43f5e','#9a9a9a'];
+    const cores = ['#FAC775','#EF9F27','#00b4d8','#36d399','#00b4d8','#7b61ff','#ff5c9e','#16a34a','#f43f5e','#9a9a9a'];
     const seg = lista.map((g,i)=>`<div style="width:${(g.total/tg*100).toFixed(2)}%;background:${cores[i%cores.length]};" title="${esc(g.nome)}"></div>`).join('');
     const leg = lista.map((g,i)=>{ const pct=Math.round(g.total/tg*100); const q=g.qtd>1?` (${g.qtd}x)`:''; return `<span><i style="background:${cores[i%cores.length]}"></i>${esc(g.nome)}${q} <b>${brl(g.total)} · ${pct}%</b></span>`; }).join('');
     $('resumo-gastos').innerHTML = `<div class="sbar">${seg}</div><div class="sleg">${leg}</div>`;
@@ -826,7 +892,7 @@ async function removerDespesa(id){
 
 function resumoWhatsApp(){
   const r = acerto();
-  let t = '🔴⚫ *RachaConta* — '+ (ev?ev.name:'') +'\n\n';
+  let t = '⚫🟡 *RachaConta* — '+ (ev?ev.name:'') +'\n\n';
   t += '💰 Total: '+brl(r.total)+'\n\n';
   if(r.transf.length){
     t += '*Quem paga pra quem:*\n';
@@ -880,7 +946,7 @@ async function authSubmit(){
     const nome = $('au-nome').value.trim();
     const wpp = $('au-wpp').value.replace(/\D/g,'');
     if(!nome){ alert('Digite seu nome.'); resetAuthBtn(); return; }
-    if(wpp.length<10 || wpp.length>13){ alert('WhatsApp com DDD. Ex: 41123456789'); resetAuthBtn(); return; }
+    if(wpp.length<10 || wpp.length>13){ alert('WhatsApp com DDD. Ex: 11987654321'); resetAuthBtn(); return; }
     res = await sb.auth.signUp({ email, password:senha, options:{ data:{ nome, whatsapp:wpp } } });
   } else {
     res = await sb.auth.signInWithPassword({ email, password:senha });
@@ -971,6 +1037,38 @@ async function apagarEvento(id){
 
 function abrirFoto(url){ $('foto-grande').src = url; $('foto-overlay').classList.add('on'); }
 function fecharFoto(){ $('foto-overlay').classList.remove('on'); $('foto-grande').src = ''; }
+
+// ====== CENTRAL DE AJUDA ======
+function abrirAjuda(){ $('help-overlay').classList.add('on'); localStorage.setItem('rc2-help-seen','1'); }
+function fecharAjuda(){ $('help-overlay').classList.remove('on'); }
+// abre sozinha na primeira visita da pessoa
+if(!localStorage.getItem('rc2-help-seen')){ setTimeout(abrirAjuda, 900); }
+
+// ====== SOMADORA (calculadora de nota) ======
+let calcItens = [];
+function abrirCalc(){ calcItens=[]; renderCalc(); $('calc-overlay').style.display='block'; setTimeout(()=>$('calc-valor').focus(),60); }
+function fecharCalc(){ $('calc-overlay').style.display='none'; }
+function calcAdd(){
+  const v = parseValor($('calc-valor').value);
+  if(!v || v<=0){ alert('Digite o valor do item.'); return; }
+  calcItens.push(v); $('calc-valor').value=''; renderCalc(); $('calc-valor').focus();
+}
+function calcRm(i){ calcItens.splice(i,1); renderCalc(); }
+function calcTotal(){ return Math.round(calcItens.reduce((s,v)=>s+v,0)*100)/100; }
+function renderCalc(){
+  $('calc-lista').innerHTML = calcItens.length
+    ? calcItens.map((v,i)=>`<div class="exp" style="padding:7px 0;border-bottom:1px solid var(--line);"><span style="color:var(--muted);">item ${i+1}</span><div style="display:flex;align-items:center;"><span class="val">${brl(v)}</span><button class="x" style="margin-left:10px;width:22px;height:22px;font-size:14px;" onclick="calcRm(${i})">×</button></div></div>`).join('')
+    : '<div class="empty">Vá somando os itens, um por um.</div>';
+  $('calc-total').textContent = brl(calcTotal());
+}
+function calcUsar(){
+  if(calcItens.length){
+    $('ds-valor').value = String(Math.round(calcTotal()*100));
+    fmtValorInput($('ds-valor'));
+  }
+  fecharCalc();
+}
+$('calc-valor').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); calcAdd(); } });
 
 // enter pra agilizar
 $('ev-nome-in').addEventListener('keydown',e=>{ if(e.key==='Enter') criarEvento(); });

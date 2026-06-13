@@ -195,6 +195,10 @@
       <h2><img src="icon-familia.png" class="ic hd" alt="" onerror="this.replaceWith(document.createTextNode('🎉'))"> Criar um evento</h2>
       <label>Nome do evento</label>
       <input id="ev-nome-in" placeholder="Ex: FDS na Praia" autocomplete="off">
+      <label>Local (opcional)</label>
+      <input id="ev-local-in" placeholder="Ex: Casa da praia, Churrasqueira do bloco B" autocomplete="off">
+      <label>Data e hora (opcional)</label>
+      <input id="ev-data-in" type="datetime-local">
       <button class="full" id="btn-criar" onclick="criarEvento()" style="margin-top:12px;">Criar evento e gerar link</button>
       <p class="hint">Você vira o organizador. Depois é só compartilhar o link com a galera.</p>
     </div>
@@ -241,6 +245,7 @@
         <span class="pill" id="ev-status"></span>
       </div>
       <p class="hint" id="ev-hint"></p>
+      <div id="ev-info"></div>
       <button class="wa" onclick="compartilhar()">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="#06310f"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
         Compartilhar link do evento
@@ -343,9 +348,10 @@
     <details class="hlp"><summary>🧮 A nota tem vários itens. Preciso somar de cabeça?</summary><div class="bd">Não! Toque em <b>"🧮 Somar itens da nota"</b> embaixo do campo de valor. Vá digitando item por item — o app soma e joga o total no lançamento.</div></details>
     <details class="hlp"><summary>✂️ Comprei algo que nem todos usaram. E aí?</summary><div class="bd">No gasto lançado, toque em <b>"✏️ quem dividiu"</b> e desmarque quem ficou de fora (ex: a cerveja que as crianças não bebem 😄). A conta se ajusta sozinha.</div></details>
     <details class="hlp"><summary>💸 Como sei quanto devo pagar?</summary><div class="bd">No card <b>"Acerto de contas"</b>: toque no seu nome pra ver o detalhe do que consumiu. As setas embaixo mostram <b>quem paga pra quem</b>. O organizador também manda o resumo no grupo do WhatsApp.</div></details>
+    <details class="hlp"><summary>📸 O que é o mural de momentos?</summary><div class="bd">O álbum do rolê! No fim da página, qualquer um pode <b>pendurar fotos com uma frase</b> — elas viram polaroides e ficam guardadas no evento pra sempre, mesmo depois de fechado. Você só pode tirar as fotos que <b>você</b> postou (o organizador pode tirar qualquer uma).</div></details>
 
     <div class="hlp-cap">Para quem organiza</div>
-    <details class="hlp"><summary>🎉 Como crio um evento?</summary><div class="bd">Entre na sua conta, dê um nome ao evento (ex: FDS na Praia) e toque em <b>"Criar evento e gerar link"</b>. Depois é só tocar em <b>"Compartilhar link do evento"</b> e mandar no grupo.</div></details>
+    <details class="hlp"><summary>🎉 Como crio um evento?</summary><div class="bd">Entre na sua conta, dê um nome ao evento (ex: FDS na Praia) e, se quiser, informe <b>local e data</b> — quem entrar poderá salvar direto na agenda do celular. Toque em <b>"Criar evento e gerar link"</b> e depois em <b>"Compartilhar link do evento"</b> pra mandar no grupo.</div></details>
     <details class="hlp"><summary>👥 Posso adicionar ou editar pessoas?</summary><div class="bd">Pode. Em <b>"Quem tá no rolê"</b>, use <b>"+ Adicionar pessoa"</b> (pra quem não tem celular ali) ou o ✏️ ao lado de cada um pra corrigir nome, adultos e crianças.</div></details>
     <details class="hlp"><summary>🧒 Como funciona o valor das crianças?</summary><div class="bd">Por padrão, criança paga <b>50% do valor de um adulto</b>. O organizador pode ajustar por criança: toque na etiqueta 🧒 dela na lista (ex: bebê = 0%).</div></details>
     <details class="hlp"><summary>🔒 O que é "fechar o evento"?</summary><div class="bd">Quando acabar o rolê, feche o evento: <b>trava novos lançamentos</b> e congela o acerto final. Mudou algo? Você pode <b>reabrir</b> quando quiser. Eventos fechados podem ser apagados de vez.</div></details>
@@ -475,7 +481,12 @@ async function criarEvento(){
   const pct = 50;  // padrão; ajustes finos são feitos por criança depois
   if(!nome){ alert('Dê um nome ao evento.'); return; }
   $('btn-criar').disabled = true; $('btn-criar').textContent = 'Criando…';
-  const { data, error } = await sb.from('events').insert({ name:nome, child_pct:pct, owner:session.user.id }).select().single();
+  const ins = { name:nome, child_pct:pct, owner:session.user.id };
+  const local = $('ev-local-in').value.trim();
+  const quando = $('ev-data-in').value;
+  if(local) ins.place = local;
+  if(quando) ins.starts_at = new Date(quando).toISOString();
+  const { data, error } = await sb.from('events').insert(ins).select().single();
   if(error){ alert('Erro ao criar: '+error.message); $('btn-criar').disabled=false; $('btn-criar').textContent='Criar evento e gerar link'; return; }
   eventId = data.id; ev = data;
   setMem(eventId, { admin:true });
@@ -716,6 +727,25 @@ async function removerParticipante(){
   fecharEditor(); await carregar(false); renderEvento();
 }
 
+// ====== CALENDÁRIO (.ics) ======
+function baixarICS(){
+  if(!ev || !ev.starts_at) return;
+  const ini = new Date(ev.starts_at);
+  const fim = new Date(ini.getTime() + 4*3600*1000); // 4h de rolê
+  const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
+  const escT = s => String(s||'').replace(/([,;\\])/g,'\\$1');
+  const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//RachaConta//PT-BR','BEGIN:VEVENT',
+    'UID:'+eventId+'@rachaconta','DTSTAMP:'+fmt(new Date()),'DTSTART:'+fmt(ini),'DTEND:'+fmt(fim),
+    'SUMMARY:'+escT(ev.name), ev.place?'LOCATION:'+escT(ev.place):null,
+    'DESCRIPTION:Divisão de gastos no RachaConta: '+linkEvento(),
+    'END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
+  const blob = new Blob([ics],{type:'text/calendar;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (ev.name||'evento').replace(/[^\wÀ-ú ]+/g,'').trim().replace(/ +/g,'-')+'.ics';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
 // ====== COMPARTILHAR ======
 function linkEvento(){ return location.origin + location.pathname + '?e=' + eventId; }
 function compartilhar(){
@@ -780,6 +810,16 @@ function renderEvento(){
   $('ev-status').textContent = fechado ? 'fechado' : 'aberto';
   $('ev-status').className = 'pill ' + (fechado?'fechado':'aberto');
   $('ev-edit').style.display = isAdmin ? '' : 'none';
+  const info = [];
+  if(ev && ev.place) info.push('📍 '+esc(ev.place));
+  if(ev && ev.starts_at){
+    const d = new Date(ev.starts_at);
+    info.push('📅 '+d.toLocaleString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(',',' ·'));
+  }
+  $('ev-info').innerHTML = info.length
+    ? '<p class="hint" style="margin:2px 0 0;">'+info.join(' &nbsp;·&nbsp; ')+'</p>'
+      + (ev.starts_at ? '<button class="ghost full mini" style="margin-top:10px;" onclick="baixarICS()">📅 Adicionar ao meu calendário</button>' : '')
+    : '';
   $('ev-hint').textContent = fechado
     ? 'Evento fechado. Veja o acerto abaixo.'
     : 'Cada um lança os próprios gastos. Compartilhe o link com a galera.';
@@ -948,6 +988,8 @@ function resumoWhatsApp(){
 function resetFormCriar(){
   $('btn-criar').disabled = false; $('btn-criar').textContent = 'Criar evento e gerar link';
   $('ev-nome-in').value = '';
+  if($('ev-local-in')) $('ev-local-in').value = '';
+  if($('ev-data-in')) $('ev-data-in').value = '';
 }
 function resetFormEntrar(){
   $('btn-entrar').disabled = false; $('btn-entrar').textContent = 'Entrar';
@@ -1133,8 +1175,6 @@ function renderMural(){
 // ====== CENTRAL DE AJUDA ======
 function abrirAjuda(){ $('help-overlay').classList.add('on'); localStorage.setItem('rc2-help-seen','1'); }
 function fecharAjuda(){ $('help-overlay').classList.remove('on'); }
-// abre sozinha na primeira visita da pessoa
-if(!localStorage.getItem('rc2-help-seen')){ setTimeout(abrirAjuda, 900); }
 
 // ====== SOMADORA (calculadora de nota) ======
 let calcItens = [];

@@ -731,13 +731,14 @@ async function removerParticipante(){
 function baixarICS(){
   if(!ev || !ev.starts_at) return;
   const ini = new Date(ev.starts_at);
-  const fim = new Date(ini.getTime() + 4*3600*1000); // 4h de rolê
   const fmt = d => d.toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
   const escT = s => String(s||'').replace(/([,;\\])/g,'\\$1');
   const ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//RachaConta//PT-BR','BEGIN:VEVENT',
-    'UID:'+eventId+'@rachaconta','DTSTAMP:'+fmt(new Date()),'DTSTART:'+fmt(ini),'DTEND:'+fmt(fim),
+    'UID:'+eventId+'@rachaconta','DTSTAMP:'+fmt(new Date()),'DTSTART:'+fmt(ini),
     'SUMMARY:'+escT(ev.name), ev.place?'LOCATION:'+escT(ev.place):null,
     'DESCRIPTION:Divisão de gastos no RachaConta: '+linkEvento(),
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+escT(ev.name)+' é daqui a 1 hora!','TRIGGER:-PT1H','END:VALARM',
+    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+escT(ev.name)+' — é agora! 🎉','TRIGGER:PT0S','END:VALARM',
     'END:VEVENT','END:VCALENDAR'].filter(Boolean).join('\r\n');
   const blob = new Blob([ics],{type:'text/calendar;charset=utf-8'});
   const a = document.createElement('a');
@@ -811,7 +812,7 @@ function renderEvento(){
   $('ev-status').className = 'pill ' + (fechado?'fechado':'aberto');
   $('ev-edit').style.display = isAdmin ? '' : 'none';
   const info = [];
-  if(ev && ev.place) info.push('📍 '+esc(ev.place));
+  if(ev && ev.place) info.push('<a href="https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(ev.place)+'" target="_blank" rel="noopener" style="color:var(--accent2);text-decoration:none;font-weight:600;">📍 '+esc(ev.place)+'</a>');
   if(ev && ev.starts_at){
     const d = new Date(ev.starts_at);
     info.push('📅 '+d.toLocaleString('pt-BR',{weekday:'short',day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(',',' ·'));

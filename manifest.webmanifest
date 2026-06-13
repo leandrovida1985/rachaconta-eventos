@@ -1,0 +1,12 @@
+{
+  "name": "RachaConta",
+  "short_name": "RachaConta",
+  "description": "Divida o rolê sem dor de cabeça",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#141414",
+  "theme_color": "#141414",
+  "icons": [
+    { "src": "icone-app.png", "sizes": "1024x1024", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -6,6 +6,7 @@
 <title>RachaConta — Eventos</title>
 <link rel="icon" type="image/png" href="icone-app.png">
 <link rel="apple-touch-icon" href="icone-app.png">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#141414">
 <style>
   :root{
@@ -969,6 +970,7 @@ async function removerDespesa(id){
   if(!confirm('Apagar este gasto?')) return;
   const { error } = await sb.from('expenses').delete().eq('id', id);
   if(error){ alert('Erro: '+error.message); return; }
+  try{ const p = e && e.receipt_url && e.receipt_url.split('/receipts/')[1]; if(p) await sb.storage.from('receipts').remove([decodeURIComponent(p)]); }catch(x){}
   await carregar(false); renderEvento();
 }
 
@@ -1109,7 +1111,16 @@ async function apagarEvento(id){
   const { data:e } = await sb.from('events').select('owner').eq('id', id).maybeSingle();
   const ehDono = (session && e && e.owner===session.user.id) || getMem(id).admin;
   if(ehDono){
-    if(!confirm('Apagar este evento DE VEZ? Remove todos os gastos e participantes, para todo mundo. Não dá pra desfazer.')) return;
+    if(!confirm('Apagar este evento DE VEZ? Remove todos os gastos, participantes e fotos, para todo mundo. Não dá pra desfazer.')) return;
+    // limpa as fotos do evento no storage (comprovantes + mural)
+    try{
+      let nomes = [], pagina;
+      do{
+        pagina = await sb.storage.from('receipts').list(id, { limit:100, offset:nomes.length });
+        if(pagina.data && pagina.data.length) nomes = nomes.concat(pagina.data.map(f => id+'/'+f.name));
+      }while(pagina.data && pagina.data.length === 100);
+      if(nomes.length) await sb.storage.from('receipts').remove(nomes);
+    }catch(e){ /* se falhar, segue: o evento é apagado mesmo assim */ }
     const { error } = await sb.from('events').delete().eq('id', id);
     if(error){ alert('Erro ao apagar: '+error.message); return; }
   } else {
@@ -1154,6 +1165,7 @@ async function removerMomento(id){
   if(!confirm('Tirar esta foto do mural?')) return;
   const { error } = await sb.from('moments').delete().eq('id', id);
   if(error){ alert('Erro: '+error.message); return; }
+  try{ const p = m && m.photo_url && m.photo_url.split('/receipts/')[1]; if(p) await sb.storage.from('receipts').remove([decodeURIComponent(p)]); }catch(x){}
   await carregar(false); renderEvento();
 }
 function renderMural(){

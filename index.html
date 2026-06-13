@@ -184,6 +184,12 @@
       <button class="full" id="btn-auth" onclick="authSubmit()">Entrar</button>
       <button class="ghost full mini" id="btn-auth-toggle" onclick="authToggle()" style="margin-top:8px;">Não tenho conta — criar conta</button>
     </div>
+    <div class="card">
+      <h2>🔗 Entrar por link</h2>
+      <p class="hint" style="margin:0 0 8px;">Recebeu o link de um evento e ele não apareceu aqui? Cole abaixo pra abrir nesse app.</p>
+      <input id="link-in-auth" placeholder="Cole o link do evento" autocomplete="off">
+      <button class="full mini" onclick="entrarPorLink('link-in-auth')" style="margin-top:10px;">Abrir evento</button>
+    </div>
     <div id="auth-meus-eventos"></div>
   </div>
 
@@ -202,6 +208,12 @@
       <input id="ev-data-in" type="datetime-local">
       <button class="full" id="btn-criar" onclick="criarEvento()" style="margin-top:12px;">Criar evento e gerar link</button>
       <p class="hint">Você vira o organizador. Depois é só compartilhar o link com a galera.</p>
+    </div>
+    <div class="card">
+      <h2>🔗 Entrar por link</h2>
+      <p class="hint" style="margin:0 0 8px;">Recebeu o link de um evento de outra pessoa e ele não apareceu aqui? Cole abaixo pra abrir nesse app.</p>
+      <input id="link-in-home" placeholder="Cole o link do evento" autocomplete="off">
+      <button class="full mini" onclick="entrarPorLink('link-in-home')" style="margin-top:10px;">Abrir evento</button>
     </div>
     <div id="meus-eventos"></div>
   </div>
@@ -360,6 +372,7 @@
     <div class="hlp-cap">Dúvidas gerais</div>
     <details class="hlp"><summary>📱 Meus dados ficam onde?</summary><div class="bd">Os lançamentos ficam guardados na nuvem, só acessíveis por quem tem o link do evento. Seu aparelho lembra de você em cada evento — se trocar de celular, entre de novo pelo link com o <b>mesmo WhatsApp</b> que o app te reconhece.</div></details>
     <details class="hlp"><summary>🔄 A tela não atualizou. E agora?</summary><div class="bd">O app se atualiza sozinho a cada poucos segundos. Se precisar, toque em <b>"🔄 Atualizar"</b> no fim da página.</div></details>
+    <details class="hlp"><summary>🔗 Recebi um link mas o evento não aparece no app salvo na tela</summary><div class="bd">O app que você salvou na tela inicial e o navegador (Safari/Chrome) guardam dados <b>separados</b> no celular — por isso um evento aberto no navegador não aparece sozinho no app. Solução: copie o link que te mandaram, abra o app, e cole no campo <b>"🔗 Entrar por link"</b> na tela inicial. O evento abre e passa a ficar na sua lista.</div></details>
 
     <button class="full" onclick="fecharAjuda()" style="margin-top:14px;">Entendi, voltar pro app</button>
   </div>
@@ -399,6 +412,7 @@ let isAdmin = false;
 let enAd = 1, enCr = 0;   // contadores da tela "entrar"
 let expDesp = {};         // quais despesas estão com 'quem dividiu' aberto
 let expPessoa = {};       // quais pessoas estão com o detalhe aberto no acerto
+let expProd = {};         // quais produtos estão abertos por pessoa (chave pid|expId)
 let peId=null, peAd=1, peCr=0;  // editor de participante (organizador)
 let pollTimer = null;
 let moments = [];         // mural de momentos
@@ -469,6 +483,16 @@ async function carregar(rerender){
   participants = ps || [];
   expenses = xs || [];
   moments = ms || [];
+  // se eu fui removido do evento, meu cadastro local ficou inválido — limpa e peço pra entrar de novo
+  if(myId && !participants.some(p=>p.id===myId)){
+    myId = null; setMem(eventId, { participantId:null });
+    if($('tela-evento').style.display!=='none'){
+      if(pollTimer) clearInterval(pollTimer);
+      alert('Seu cadastro neste evento foi removido. Entre de novo (com o mesmo WhatsApp) pra continuar.');
+      prepEntrar(); show('tela-entrar');
+      return true;
+    }
+  }
   if(rerender && $('tela-evento').style.display!=='none') renderEvento();
   return true;
 }
@@ -586,6 +610,10 @@ function comprimir(file){
 
 // ====== LANÇAR DESPESA ======
 async function lancarDespesa(){
+  if(!myId || !participants.some(p=>p.id===myId)){
+    alert('Você não está cadastrado neste evento. Entre de novo (com o mesmo WhatsApp) pra lançar.');
+    if(pollTimer) clearInterval(pollTimer); prepEntrar(); show('tela-entrar'); return;
+  }
   const desc = $('ds-desc').value.trim() || 'Despesa';
   const valor = parseValor($('ds-valor').value);
   if(!valor || valor<=0){ alert('Digite um valor válido.'); return; }
@@ -768,9 +796,28 @@ function pesoP(p){
   for(let i=0;i<n;i++) w += pctCrianca(p,i)/100;
   return w;
 }
+// cada pessoa de um cadastro (grupo) vira um "membro" com seu próprio peso
+function membrosDe(p){
+  const list=[];
+  const na=Number(p.adults)||0, nc=Number(p.children)||0;
+  for(let i=0;i<na;i++) list.push({ pid:p.id, key:p.id+':a:'+i, tipo:'a', idx:i, nome:nomeMembro(p,'a',i), w:1 });
+  for(let i=0;i<nc;i++) list.push({ pid:p.id, key:p.id+':c:'+i, tipo:'c', idx:i, nome:nomeMembro(p,'c',i), w:pctCrianca(p,i)/100 });
+  return list;
+}
+function todosMembros(){ const a=[]; participants.forEach(p=>{ membrosDe(p).forEach(m=>a.push(m)); }); return a; }
+// excluído se a chave do membro está em out_ids OU (compatibilidade) o pid do grupo inteiro está
+function membroExcluido(out, m){ return out.includes(m.key) || out.includes(m.pid); }
+// rótulo claro: usa o nome se houver; senão deixa explícito de qual grupo é
+function rotuloMembro(m){
+  const generico = (m.tipo==='a'?'Adulto ':'Criança ')+(m.idx+1);
+  if(m.nome && m.nome!==generico) return m.nome;
+  const p = participants.find(x=>x.id===m.pid);
+  return generico + (p ? ' (de '+p.name+')' : '');
+}
+function iconeMembro(m){ return m.tipo==='a' ? '👤' : '🧒'; }
 function incluidosNa(e){
   const out = Array.isArray(e.out_ids) ? e.out_ids : [];
-  return participants.filter(p=>!out.includes(p.id));
+  return todosMembros().filter(m=>!membroExcluido(out,m));
 }
 function acerto(){
   const total = expenses.reduce((s,e)=>s+Number(e.amount),0);
@@ -778,8 +825,8 @@ function acerto(){
   participants.forEach(p=>{ share[p.id]=0; adv[p.id]=0; });
   expenses.forEach(e=>{
     const incl = incluidosNa(e);
-    const pesoTot = incl.reduce((s,p)=>s+pesoP(p),0);
-    if(pesoTot>0) incl.forEach(p=>{ share[p.id] += Number(e.amount)*pesoP(p)/pesoTot; });
+    const pesoTot = incl.reduce((s,m)=>s+m.w,0);
+    if(pesoTot>0) incl.forEach(m=>{ if(share[m.pid]!==undefined) share[m.pid] += Number(e.amount)*m.w/pesoTot; });
     if(e.participant_id && adv[e.participant_id]!==undefined) adv[e.participant_id]+=Number(e.amount);
   });
   const bal = participants.map(p=>({ id:p.id, nome:p.name, v:Math.round((adv[p.id]-share[p.id])*100)/100 }));
@@ -796,10 +843,28 @@ function acerto(){
 }
 function toggleDesp(id){ expDesp[id] = !expDesp[id]; renderEvento(); }
 function togglePessoa(pid){ expPessoa[pid] = !expPessoa[pid]; renderEvento(); }
-async function toggleOutId(expId, pid){
+function toggleProd(pk){ expProd[pk] = !expProd[pk]; renderEvento(); }
+// quanto uma pessoa (membro) consumiu de UM produto específico
+function consumoMembroProd(m, e){
+  const out = Array.isArray(e.out_ids) ? e.out_ids : [];
+  if(membroExcluido(out, m)) return 0;
+  const tot = todosMembros().filter(x=>!membroExcluido(out,x)).reduce((s,x)=>s+x.w,0);
+  return tot>0 ? Number(e.amount)*m.w/tot : 0;
+}
+async function toggleOutId(expId, key){
   const e = expenses.find(x=>x.id===expId); if(!e) return;
   let out = Array.isArray(e.out_ids) ? e.out_ids.slice() : [];
-  if(out.includes(pid)) out = out.filter(x=>x!==pid); else out.push(pid);
+  const parts = String(key).split(':');
+  const pid = parts[0];
+  // gasto antigo excluía o grupo todo pelo pid: expande pra membros antes de mexer num só
+  if(parts.length===3 && out.includes(pid)){
+    out = out.filter(x=>x!==pid);
+    const p = participants.find(x=>x.id===pid);
+    if(p) membrosDe(p).forEach(m=>{ if(m.key!==key && !out.includes(m.key)) out.push(m.key); });
+    // clicar num membro que estava fora = trazê-lo de volta, então não adiciona a chave dele
+  } else {
+    if(out.includes(key)) out = out.filter(x=>x!==key); else out.push(key);
+  }
   e.out_ids = out; renderEvento();           // atualiza na hora
   const { error } = await sb.from('expenses').update({ out_ids: out }).eq('id', expId);
   if(error){ alert('Erro: '+error.message); await carregar(false); renderEvento(); }
@@ -869,7 +934,13 @@ function renderEvento(){
     ? expenses.map(e=>{
         const out = Array.isArray(e.out_ids) ? e.out_ids : [];
         const podeEditar = !fechado && (isAdmin || e.participant_id===myId);
-        const foraNomes = out.map(nome).filter(n=>n && n!=='—');
+        const foraNomes = out.map(o=>{
+          const grupo = participants.find(x=>x.id===o);
+          if(grupo) return grupo.name+' (todos)';                 // formato antigo: grupo inteiro
+          const pp = participants.find(x=>o.indexOf(x.id+':')===0);
+          if(pp){ const m = membrosDe(pp).find(mm=>mm.key===o); if(m) return rotuloMembro(m); }
+          return null;
+        }).filter(Boolean);
         const aberto = expDesp[e.id];
         let h = `<div class="exprow"><div class="exp"><div style="flex:1;">
           <div>${esc(e.description)}</div>
@@ -882,10 +953,14 @@ function renderEvento(){
           ${podeEditar?`<button class="x" style="margin-left:10px;width:22px;height:22px;font-size:14px;" onclick="removerDespesa('${e.id}')">×</button>`:''}
         </div></div>`;
         if(aberto && podeEditar){
-          h += '<div class="dedit">' + (participants.length ? participants.map(p=>{
-            const on = !out.includes(p.id);
-            return `<span class="ichip ${on?'on':'off'}" onclick="toggleOutId('${e.id}','${p.id}')">${on?'✓':'✕'} <span class="tx">${esc(p.name)}</span></span>`;
-          }).join('') : '<span class="empty" style="padding:0;">Sem participantes.</span>') + '</div>';
+          let chips = '';
+          participants.forEach(p=>{
+            membrosDe(p).forEach(m=>{
+              const on = !membroExcluido(out, m);
+              chips += `<span class="ichip ${on?'on':'off'}" onclick="toggleOutId('${e.id}','${m.key}')">${on?'✓':'✕'} <span class="tx">${iconeMembro(m)} ${esc(rotuloMembro(m))}</span></span>`;
+            });
+          });
+          h += '<div class="dedit">' + (chips || '<span class="empty" style="padding:0;">Sem participantes.</span>') + '</div>';
         }
         return h + '</div>';
       }).join('')
@@ -906,15 +981,31 @@ function renderEvento(){
         <span style="text-align:right;line-height:1.35;">consumiu <b>${brl(consumiu)}</b><br><span style="font-size:12px;color:var(--muted);font-weight:400;">gastou ${brl(gastou)}</span></span>
       </div>`;
       if(ex){
+        const membrosGrupo = membrosDe(p);
+        const podeAbrir = membrosGrupo.length > 1;   // só vale abrir por pessoa se o grupo tem mais de um
         html += '<div class="det"><div class="dtab">';
         html += '<div class="dh">Produto</div><div class="dh r">Gastou</div><div class="dh r">Consumiu</div>';
         expenses.forEach(e=>{
-          const incl = incluidosNa(e);
-          const dentro = incl.some(x=>x.id===p.id);
-          const pesoTot = incl.reduce((s,x)=>s+pesoP(x),0);
-          const consumiuProd = (dentro && pesoTot>0) ? Number(e.amount)*pesoP(p)/pesoTot : 0;
+          const out = Array.isArray(e.out_ids) ? e.out_ids : [];
+          const pesoTot = todosMembros().filter(m=>!membroExcluido(out,m)).reduce((s,m)=>s+m.w,0);
+          const meuPeso = membrosGrupo.filter(m=>!membroExcluido(out,m)).reduce((s,m)=>s+m.w,0);
+          const consumiuProd = (pesoTot>0) ? Number(e.amount)*meuPeso/pesoTot : 0;
           const gastouProd = (e.participant_id===p.id) ? Number(e.amount) : 0;
-          html += `<div>${esc(e.description)}</div><div class="r">${gastouProd>0.0001?brl(gastouProd):'—'}</div><div class="r">${consumiuProd>0.0001?brl(consumiuProd):'—'}</div>`;
+          const pk = p.id+'|'+e.id;
+          const temComoAbrir = podeAbrir && consumiuProd>0.0001;
+          const aberto2 = temComoAbrir && expProd[pk];
+          const prodCell = temComoAbrir
+            ? `<div style="cursor:pointer;"onclick="toggleProd('${pk}')"><span style="color:var(--accent2);">${aberto2?'▾':'▸'}</span> ${esc(e.description)}</div>`
+            : `<div>${esc(e.description)}</div>`;
+          html += prodCell + `<div class="r">${gastouProd>0.0001?brl(gastouProd):'—'}</div><div class="r">${consumiuProd>0.0001?brl(consumiuProd):'—'}</div>`;
+          if(aberto2){
+            let sub = '';
+            membrosGrupo.forEach(m=>{
+              const c = consumoMembroProd(m, e);
+              sub += `<div class="dl" style="padding:1px 0;"><span class="cada">${iconeMembro(m)} ${esc(rotuloMembro(m))}</span><span>${c>0.0001?brl(c):'—'}</span></div>`;
+            });
+            html += `<div style="grid-column:1/-1;padding:3px 0 7px 12px;border-bottom:1px dashed var(--line);margin-bottom:3px;">${sub}</div>`;
+          }
         });
         html += `<div class="dt">Total</div><div class="dt r">${brl(gastou)}</div><div class="dt r">${brl(consumiu)}</div>`;
         html += '</div>';
@@ -1106,6 +1197,22 @@ function renderListaEventos(containerId, eventos){
 }
 function reentrar(id){ location.href = location.pathname + '?e=' + id; }
 
+// abrir um evento colando o link (ou o código) — resolve o caso do app instalado
+// que não enxerga eventos que você abriu no Safari/WhatsApp (cada um guarda dados separados)
+function entrarPorLink(inputId){
+  const raw = (($(inputId)||{}).value||'').trim();
+  if(!raw){ alert('Cole o link do evento que te mandaram.'); return; }
+  let id = null;
+  const m = raw.match(/[?&]e=([^&\s]+)/);          // link com ?e=...
+  if(m){ id = decodeURIComponent(m[1]); }
+  else {                                            // colou só o código (UUID)?
+    const u = raw.match(/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}/);
+    if(u) id = u[0];
+  }
+  if(!id){ alert('Não reconheci esse link. Cole o link completo do evento (aquele que tem "?e=" no meio).'); return; }
+  location.href = location.pathname + '?e=' + id;
+}
+
 // apaga um evento fechado: dono apaga de vez; senão só tira da lista local
 async function apagarEvento(id){
   const { data:e } = await sb.from('events').select('owner').eq('id', id).maybeSingle();
@@ -1143,7 +1250,7 @@ function mmFotoEscolhida(){
 }
 async function postarMomento(){
   if(!mmFile){ alert('Escolha uma foto primeiro. 📷'); return; }
-  if(!myId){ alert('Entre no evento primeiro.'); return; }
+  if(!myId || !participants.some(p=>p.id===myId)){ alert('Entre no evento de novo (com o mesmo WhatsApp) pra postar.'); if(pollTimer) clearInterval(pollTimer); prepEntrar(); show('tela-entrar'); return; }
   const frase = $('mm-frase').value.trim();
   $('btn-momento').disabled = true; $('btn-momento').textContent = 'Pendurando…';
   try{
